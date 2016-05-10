@@ -13,7 +13,7 @@ Be aware that the paths of --config and --config-local are NOT based on basePath
     ```javascript
     {
         "basePath" : "ENTER YOUR ABSOLUTE BASE PATH HERE (it´s optional)",
-        "BuildTags": "test"
+        "buildTags": "test"
     }
     ```
 
@@ -32,7 +32,7 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
             { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.png", "resolution":"24x768", "proportional" : "false" }
         ],
 
-        "defaultBuildTags" : "all"
+        "buildTags" : "all"
     }
     ```
 
@@ -46,7 +46,7 @@ Default for --config.local is "config-local.json"
 Default for --tags is "all" (separate multiple tags with commas ",")
 
 ### Use as node module
-1. Create the config.json and confiog-local.json file (see above) or use the configure() and configureWithData() methods.
+1. Create the config.json and config-local.json file (see above) or use the configure() and configureWithData() methods.
 
 2. A: Run without any configs
     ```javascript
