@@ -306,7 +306,38 @@ var generateImage = function (image, config)
 
     fileExists(sourcePath)
         .then( function(){
-            var newImage = (image.proportional != null && (image.proportional == "true" || image.proportional === true)) ? imageMagick(sourcePath).resize(width, height) : imageMagick(sourcePath).resizeExact(width, height);
+            var newImage = imageMagick(sourcePath);
+            // apply quality
+            if( image.quality !== null )
+            {
+                newImage.quality( image.quality );
+            }
+            // apply options
+            if( typeof image.options != "undefined" && image.options !== null )
+            {
+                Object.keys(image.options).forEach(function(key) {
+                    try
+                    {
+                        console.log( "    -option '" + key + "': '" + (image.options[key]||[]).join(",") + "'" );
+                        if( typeof newImage[key] != "undefined" )
+                        {
+                            newImage[key].apply(newImage, image.options[key] || []);
+                        }
+                    }
+                    catch( e )
+                    {
+                        display.warning("Option '" + key + "': " + e.message);
+                    }
+                });
+            }
+            if( image.proportional != null && (image.proportional == "true" || image.proportional === true) )
+            {
+                newImage.resize(width, height);
+            }
+            else
+            {
+                newImage.resizeExact(width, height);
+            }
             newImage.write(targetPath, function(err) {
                 if (err) {
                     deferred.reject(err);

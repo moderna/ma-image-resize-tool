@@ -28,13 +28,23 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
 
         "images":
         [
-            { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.png", "resolution":"24x768", "proportional" : "false" },
-            { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.png", "resolution":"24x768", "proportional" : "false" }
+            { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.jpg", "resolution":"1024x768", "proportional" : "false", "quality" : 100 },
+            { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-2048x1536.jpg", "resolution":"2048x1536", "proportional" : "false", "quality" : 100 },
+            {
+                "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-lowq-flipped.jpg", "resolution":"2048x1536", "proportional" : "false",
+                "options": {
+                    "quality" : [20],
+                    "flip" : null
+                }
+            }
         ],
 
-        "buildTags" : "all"
+        "defaultBuildTags" : "all"
     }
     ```
+   * The "proportional" key is optional (default is false).
+   * The "quality" key is optional.
+   * The "options" key is optional and you can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html
 
 3. Run it with these (optional) parameters:
     ```
