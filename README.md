@@ -28,7 +28,7 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
 
         "images":
         [
-            { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.jpg", "resolution":"1024x768", "proportional" : "false", "quality" : 100 },
+            { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.jpg", "resolution":"1024x768" },
             { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-2048x1536.jpg", "resolution":"2048x1536", "proportional" : "false", "quality" : 100 },
             {
                 "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-lowq-flipped.jpg", "resolution":"2048x1536", "proportional" : "false",
