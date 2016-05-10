@@ -41,9 +41,9 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
     ma-image-resize-tool --config config.json --config-local config-local.json --tags all,test
     ```
 All parameters are optional:
-- Default for --config is "config.json"
-- Default for --config.local is "config-local.json"
-- Default for --tags is "all" (separate multiple tags with commas ",")
+Default for --config is "config.json"
+Default for --config.local is "config-local.json"
+Default for --tags is "all" (separate multiple tags with commas ",")
 
 ### Use as node module
 1. Create the config.json and confiog-local.json file (see above) or use the configure() and configureWithData() methods.
@@ -87,11 +87,6 @@ All parameters are optional:
     maImageResizeTool.configureWithData( config, configLocal || null, "all,test" );
     maImageResizeTool.run();
     ```javascript
-
-### Requirements
-- Installed Node.js
-- Installed ImageMagic
-- Node GraphicsMagick package ("gm")
 
 ### Local Commandline Install
 If you are like us and don't like global package installs then please consider using these console command files to execute the module locally:
