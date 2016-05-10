@@ -41,8 +41,11 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
     ma-image-resize-tool --config config.json --config-local config-local.json --tags all,test
     ```
 All parameters are optional:
+
 Default for --config is "config.json"
+
 Default for --config.local is "config-local.json"
+
 Default for --tags is "all" (separate multiple tags with commas ",")
 
 ### Use as node module
@@ -76,12 +79,12 @@ Default for --tags is "all" (separate multiple tags with commas ",")
                 { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-2048x1536.png", "resolution":"2048x1536", "proportional" : "false" }
             ],
 
-        "defaultBuildTags" : "all"
+        "buildTags" : "all"
     };
 
     var configLocal = {
         // "basePath" : "ENTER YOUR ABSOLUTE BASE PATH HERE (it´s optional)",
-        "BuildTags": "all"
+        "buildTags": "all"
     };
 
     maImageResizeTool.configureWithData( config, configLocal || null, "all,test" );
@@ -92,7 +95,7 @@ Default for --tags is "all" (separate multiple tags with commas ",")
 If you are like us and don't like global package installs then please consider using these console command files to execute the module locally:
 
 Windows (console.cmd):
-    ```
+    ```bash
     @echo off
     %~d1
     cd "%~p1"
@@ -102,7 +105,7 @@ Windows (console.cmd):
     ```
 
 Mac (console.command):
-    ```
+    ```bash
     #!/bin/sh
     cd "$(dirname "$0")"
     export PATH=./node_modules/.bin:$PATH
