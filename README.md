@@ -41,9 +41,9 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
     ma-image-resize-tool --config config.json --config-local config-local.json --tags all,test
     ```
 All parameters are optional:
-	Default for --config is "config.json"
-	Default for --config.local is "config-local.json"
-	Default for --tags is "all" (separate multiple tags with commas ",")
+   * Default for --config is "config.json"
+   * Default for --config.local is "config-local.json"
+   * Default for --tags is "all" (separate multiple tags with commas ",")
 
 ### Use as node module
 1. Create the config.json and config-local.json file (see above) or use the configure() and configureWithData() methods.
@@ -92,22 +92,22 @@ All parameters are optional:
 If you are like us and don't like global package installs then please consider using these console command files to execute the module locally:
 
 Windows (console.cmd):
-    ```javascript
+```
     @echo off
     %~d1
     cd "%~p1"
     SET PATH=./node_modules/.bin;%PATH%
     call cmd
     @echo on
-    ```
+```
 
 Mac (console.command):
-    ```javascript
+```
     #!/bin/sh
     cd "$(dirname "$0")"
     export PATH=./node_modules/.bin:$PATH
     bash
-    ```
+```
 
 ### Credits
 Developed by Georg Kamptner, Modern Alchemists OG, http://modalog.at
