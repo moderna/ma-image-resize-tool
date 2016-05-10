@@ -52,7 +52,7 @@ All parameters are optional:
     ```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     maImageResizeTool.run();
-    ```javascript
+    ```
 
 2. B: Run with config file paths set in js
     ```javascript
@@ -86,7 +86,7 @@ All parameters are optional:
 
     maImageResizeTool.configureWithData( config, configLocal || null, "all,test" );
     maImageResizeTool.run();
-    ```javascript
+    ```
 
 ### Local Commandline Install
 If you are like us and don't like global package installs then please consider using these console command files to execute the module locally:
@@ -99,7 +99,7 @@ Windows (console.cmd):
     SET PATH=./node_modules/.bin;%PATH%
     call cmd
     @echo on
-    ```javascript
+    ```
 
 Mac (console.command):
     ```javascript
@@ -107,7 +107,7 @@ Mac (console.command):
     cd "$(dirname "$0")"
     export PATH=./node_modules/.bin:$PATH
     bash
-    ```javascript
+    ```
 
 ### Credits
 Developed by Georg Kamptner, Modern Alchemists OG, http://modalog.at
