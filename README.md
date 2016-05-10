@@ -48,20 +48,20 @@ All parameters are optional:
 ### Use as node module
 1. Create the config.json and confiog-local.json file (see above) or use the configure() and configureWithData() methods.
 
-2a. Run without any configs
+2. A: Run without any configs
     ```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     maImageResizeTool.run();
     ```javascript
 
-2b. Run with config file paths set in js
+2. B: Run with config file paths set in js
     ```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     maImageResizeTool.configure( "config.json", "config-local.json", "all,test" );
     maImageResizeTool.run();
     ```javascript
 
-2c. Run with config data set in js
+2. C: Run with config data set in js
     ```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     var config = {
