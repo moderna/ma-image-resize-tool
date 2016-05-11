@@ -129,7 +129,7 @@ var configFileExists = function ()
                 display.success(settings.CONFIG_FILE + ' exists');
                 deferred.resolve();
             } else {
-                display.error(settings.CONFIG_FILE + ' does not exist in the root folder');
+                display.error(settings.CONFIG_FILE + ' does not exist in "'+process.cwd()+'".');
                 deferred.reject();
             }
         });
@@ -157,7 +157,7 @@ var configLocalFileExists = function ()
                 display.success(settings.CONFIG_LOCAL_FILE + ' exists');
                 deferred.resolve();
             } else {
-                display.error(settings.CONFIG_LOCAL_FILE + ' does not exist in the root folder');
+                display.error(settings.CONFIG_LOCAL_FILE + ' does not exist in "'+process.cwd()+'".');
                 deferred.reject();
             }
         });
