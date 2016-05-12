@@ -87,6 +87,12 @@ All parameters are optional:
                 { "name": "<testImage>", "path" : "./testImages/Test.png" }
             ],
 
+        "optimize":
+            {
+                "optipng" : "",
+                "jpgtran" : "-copy none -optimize"
+            },
+
         "images":
             [
                 { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.png", "resolution":"1024x768", "proportional" : "false" },
@@ -96,6 +102,7 @@ All parameters are optional:
         "buildTags" : "all"
     };
 
+    // configLocal is optional (you may want to use Null instead)
     var configLocal = {
         // "basePath" : "ENTER YOUR ABSOLUTE BASE PATH HERE (it´s optional)",
         "buildTags": "all"
