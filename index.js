@@ -1,4 +1,5 @@
 var fs     = require('fs');
+var path   = require('path');
 var gm     = require('gm');
 var imageMagick = gm.subClass({imageMagick: true});
 var colors = require('colors');
@@ -290,12 +291,7 @@ var generateImage = function (image, config)
     var basePath = config.basePath == null ? "" : config.basePath;
     // ensure ending slash
     basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + "/" : basePath;
-    // convert to backslash on windows (ImageMagic seems to have problems with forward slashes on windows if the target file does not yet exist)
-    var isWin = /^win/.test(process.platform);
-    if( isWin )
-    {
-        basePath = basePath.split("/").join("\\");
-    }
+    basePath = path.normalize(basePath);
 
     // source path
     var sourcePath = basePath + image.sourcePath;
@@ -303,7 +299,7 @@ var generateImage = function (image, config)
     _(config.aliases).forEach(function (alias) {
         sourcePath = sourcePath.split(alias.name).join(alias.path);
     });
-    sourcePath = sourcePath.replace(new RegExp(/([\\/].[\\/])/g), '/'); // remove "/./"
+    sourcePath = path.normalize(sourcePath);
 
     // target path
     var targetPath = basePath + image.targetPath;
@@ -311,12 +307,16 @@ var generateImage = function (image, config)
     _(config.aliases).forEach(function (alias) {
         targetPath = targetPath.split(alias.name).join(alias.path);
     });
-    targetPath = targetPath.replace(new RegExp(/([\\/].[\\/])/g), '/'); // remove "/./"
+    targetPath = path.normalize(targetPath);
 
     makeDir(targetPath)
         .then(function(){
             fileExists(sourcePath)
                 .then( function(){
+                    // Create empty image file (ImageMagic sometimes writes broken png data if the file does not
+                    // yet exist - I honestly don´t know why).
+                    fs.closeSync(fs.openSync(targetPath, 'w'));
+                    // create image
                     var newImage = imageMagick(sourcePath);
                     // apply quality
                     if( image.quality !== null )
@@ -406,7 +406,7 @@ var makeDir = function (filePath)
     var deferred = Q.defer();
 
     // get base path of target file
-    filePath = filePath.replace(new RegExp(/((\/||\\)[^\\/]*\.[^\\/]*$)/g), '');
+    filePath = path.dirname(filePath);
 
     mkdirp(filePath, function (error, made)
     {
