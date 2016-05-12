@@ -33,7 +33,9 @@
   "dependencies": {
     "colors": "^0.6.2",
     "gm": "^1.17.0",
+    "jpegtran-bin": "^3.0.6",
     "mkdirp": "^0.5.1",
+    "optipng-bin": "^3.1.1",
     "q": "^1.0.1",
     "underscore": "^1.6.0"
   },
