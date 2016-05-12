@@ -107,6 +107,7 @@ var readParameters = function (argv, settings)
     Object.keys(settings).forEach(function(key) {
         console.log( "   - " + key + ": " + settings[key] );
     });
+    console.log("  Current working dir is:\n   - " + process.cwd());
 
     var deferred = Q.defer();
     deferred.resolve(settings);
