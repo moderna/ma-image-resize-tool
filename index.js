@@ -6,6 +6,9 @@ var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
 var mkdirp = require('mkdirp');
+var execFile = require('child_process').execFile;
+var jpegtran = require('jpegtran-bin');
+var optipng = require('optipng-bin');
 
 /**
  * @var {Object} settings - default values of configuration (will be used if no commandline parameters are given)
@@ -230,7 +233,18 @@ var readConfigLocal = function (config)
             else
             {
                 display.success("Parsing "+settings.CONFIG_LOCAL_FILE+" succeeded.");
-                deferred.resolve( _.extend( {}, config, configLocal ) );
+
+                // merge config and set basePath
+                var finalConfig = _.extend( {}, config, configLocal );
+                if( finalConfig.basePath == null )
+                {
+                    finalConfig.basePath = path.normalize(process.cwd());
+                }
+
+                // log new working dir if available
+                console.log("  Base dir for paths in config is:\n   - " + finalConfig.basePath);
+
+                deferred.resolve( finalConfig );
             }
         });
     }
@@ -291,7 +305,7 @@ var generateImage = function (image, config)
 
     var basePath = config.basePath == null ? "" : config.basePath;
     // ensure ending slash
-    basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + "/" : basePath;
+    basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + path.sep : basePath;
     basePath = path.normalize(basePath);
 
     // source path
@@ -312,8 +326,10 @@ var generateImage = function (image, config)
 
     makeDir(targetPath)
         .then(function(){
+            var makeDirDeferred = Q.defer();
             fileExists(sourcePath)
                 .then( function(){
+                    var makeImageDeferred = Q.defer();
                     // Create empty image file (ImageMagic sometimes writes broken png data if the file does not
                     // yet exist - I honestly don´t know why).
                     fs.closeSync(fs.openSync(targetPath, 'w'));
@@ -355,29 +371,103 @@ var generateImage = function (image, config)
                         if (err)
                         {
                             display.error(err);
-                            deferred.resolve();
+                            makeDirDeferred.resolve();
                         } else {
-                            deferred.resolve();
+                            makeDirDeferred.resolve();
                             display.success(targetPath + ' ('+image.resolution+') created');
                         }
                     });
+                    return makeImageDeferred.promise;
                 })
                 .catch(function (error) {
                     // warn the user but don´t abort execution
                     display.warning('Source image "' + sourcePath + '" does not exist.');
-                    deferred.resolve();
+                    makeDirDeferred.resolve();
                 })
-                .done();
-        });
+            return makeDirDeferred.promise;
+        })
+        .then( function(){ optimizeImage(targetPath, config); deferred.resolve() } )
+
 
     return deferred.promise;
 };
 
+/**
+ * Optimizes a png file with optipng and a jpeg file with jpegtran.
+ * Depends on optipng-bin (https://github.com/imagemin/optipng-bin)
+ * and jpegtran-bin (https://github.com/imagemin/jpegtran-bin).
+ *
+ * @param  {string} filePath
+ * @param  {object} config
+ * @return {Promise}
+ */
+var optimizeImage = function (filePath, config)
+{
+    var deferred = Q.defer();
+
+    fs.exists(filePath, function (exists)
+    {
+        switch( path.extname(filePath).toLowerCase() )
+        {
+            case ".png":
+                if( config.optimize && config.optimize.optipng != null && config.optimize.optipng !== false )
+                {
+                    var parameters = [];
+                    if( config.optimize.optipng.length > 0 )
+                    {
+                        parameters = config.optimize.optipng.split(" ");
+                    }
+                    parameters = parameters.concat(['-out', filePath, filePath]);
+                    execFile(optipng, parameters, function (err) {
+                        if( err != null )
+                        {
+                            display.error('optipng ' + parameters.join(" "));
+                            display.error(err);
+                        }
+                        else
+                        {
+                            console.log('    Image optimized with: "optipng ' + config.optimize.optipng + ' -out ..."');
+                        }
+                        deferred.resolve();
+                    });
+                }
+                break;
+            case ".jpg":
+            case ".jpeg":
+                if( config.optimize && config.optimize.jpgtran != null && config.optimize.jpgtran !== false )
+                {
+                    var parameters = [];
+                    if( config.optimize.jpgtran.length > 0 )
+                    {
+                        parameters = config.optimize.jpgtran.split(" ");
+                    }
+                    parameters = parameters.concat(['-outfile', filePath, filePath]);
+                    execFile(jpegtran, parameters, function (err) {
+                        if( err != null )
+                        {
+                            display.error('jpegtran ' + parameters.join(" "));
+                            display.error(err);
+                        }
+                        else
+                        {
+                            console.log('    Image optimized with: "jpegtran ' + config.optimize.jpgtran + ' -outfile ..."');
+                        }
+                        deferred.resolve();
+                    });
+                }
+                break;
+            default:
+                deferred.resolve();
+        }
+    });
+
+    return deferred.promise;
+};
 
 /**
  * Checks if a file exists.
  *
- * @param  {Object} filePath
+ * @param  {string} filePath
  * @return {Promise}
  */
 var fileExists = function (filePath)

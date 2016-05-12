@@ -26,6 +26,12 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
             { "name": "<testImage>", "path" : "./testImages/Test.png" }
         ],
 
+        "optimize":
+        {
+            "optipng" : "",
+            "jpgtran" : "-copy none -optimize"
+        },
+
         "images":
         [
             { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.jpg", "resolution":"1024x768" },
@@ -42,6 +48,7 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
         "defaultBuildTags" : "all"
     }
     ```
+   * "optimize" is an optional object which defines whether or not to run image optimizations (optipng and jpgtran). Set them false or delete an entry to avoid optimization. You can use all options documented on the optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and jpgtran (http://gsp.com/cgi-bin/man.cgi?topic=jpegtran) websites.
    * The "proportional" key is optional (default is false).
    * The "quality" key is optional.
    * The "options" key is optional and you can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html
