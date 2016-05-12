@@ -23,7 +23,8 @@
     "icon"
   ],
   "author": {
-    "name": "Modern Alchemist OG (Georg Kamptner)"
+    "name": "Modern Alchemist OG (Georg Kamptner)",
+    "url": "http://modalog.at"
   },
   "license": "MIT",
   "bugs": {
@@ -41,11 +42,5 @@
   },
   "bin": {
     "ma-image-resize-tool": "bin\\ma-image-resize-tool"
-  },
-  "readme": "# ma-image-resize-tool\n\nAn generic image resizing tool based on node.js\n\n### Setup\n1. Install ImageMagic binaries from http://www.imagemagick.org/script/binary-releases.php\n\n2. `npm install https://github.com/moderna/ma-image-resize-tool.git --save`\n\n3. Create a config-local.json (we recommend to add this to your .gitignore file). Vales in config-local.json will overwrite values in config.json (see \"BuildTags\" as example).\n    ```javascript\n\t{\n\t\t\"BasePath\" : \"ENTER YOUR ABSOLUTE BASE PATH HERE\",\n\t\t\"BuildTags\" : \"test\"\n\t}\n    ```\n\n4. Create a config.json\n    ```javascript\n    {\n\t\t\"Aliases\":\n\t\t[\n\t\t\t{ \"<testImage>\" : \"./testImages/Test.png\" }\n\t\t],\n\t\t\n\t\t\"Output\":\n\t\t[\n\t\t\t{ \"tags\" : \"all,test\", \"sourceFile\" : \"<testImage>\", \"targetFile\" : \"testOutput/Test-1024x768.png\", \"resolution\":\"1024x768\", \"proportional\" : \"false\" }\n\t\t]\n\t\t\n\t\t\"BuildTags\" : \"all\"\n\t}\n    ```\n\n4. Run it with these parameters:\n    ```\n    --config=config.json --config-local=config-local.json --tags=all,test\n    ```\n\n### Requirements\n- Installed Node.js\n- Installed ImageMagic\n- Node GraphicsMagick package (\"gm\")\n\n\n### Credits\nDeveloped by Georg Kamptner, Modern Alchemists OG, http://modalog.at\n\n### License\n\nMIT\n",
-  "readmeFilename": "README.md",
-  "_id": "ma-image-resize-tool@1.0.0",
-  "_shasum": "947e96aa5383cc4bc371f57958717d487f37509f",
-  "_from": "_dev\\ma-image-resize-tool",
-  "_resolved": "file:_dev\\ma-image-resize-tool"
+  }
 }
