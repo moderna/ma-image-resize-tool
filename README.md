@@ -59,7 +59,7 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
     ```
 All parameters are optional:
    * Default for --config is "config.json"
-   * Default for --config.local is "config-local.json"
+   * Default for --config-local is "config-local.json"
    * Default for --tags is "all" (separate multiple tags with commas ",")
 
 ### Use as node module
