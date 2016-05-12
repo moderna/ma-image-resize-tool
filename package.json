@@ -1,6 +1,6 @@
 {
   "name": "ma-image-resize-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An generic image resizing tool based on node.js",
   "main": "index.js",
   "preferGlobal": "false",

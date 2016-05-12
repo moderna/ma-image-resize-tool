@@ -4,6 +4,7 @@ var imageMagick = gm.subClass({imageMagick: true});
 var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
+var mkdirp = require('mkdirp');
 
 /**
  * @var {Object} settings - default values of configuration (will be used if no commandline parameters are given)
@@ -289,70 +290,84 @@ var generateImage = function (image, config)
     var basePath = config.basePath == null ? "" : config.basePath;
     // ensure ending slash
     basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + "/" : basePath;
+    // convert to backslash on windows (ImageMagic seems to have problems with forward slashes on windows if the target file does not yet exist)
+    var isWin = /^win/.test(process.platform);
+    if( isWin )
+    {
+        basePath = basePath.split("/").join("\\");
+    }
 
     // source path
-    var sourcePath = image.sourcePath;
+    var sourcePath = basePath + image.sourcePath;
     // replace aliases
     _(config.aliases).forEach(function (alias) {
-        sourcePath = basePath + sourcePath.replace(new RegExp(alias.name, 'g'), alias.path);
+        sourcePath = sourcePath.split(alias.name).join(alias.path);
     });
+    sourcePath = sourcePath.replace(new RegExp(/([\\/].[\\/])/g), '/'); // remove "/./"
 
     // target path
-    var targetPath = image.targetPath;
+    var targetPath = basePath + image.targetPath;
     // replace aliases
     _(config.aliases).forEach(function (alias) {
-        targetPath = basePath + targetPath.replace(new RegExp(alias.name, 'g'), alias.path);
+        targetPath = targetPath.split(alias.name).join(alias.path);
     });
+    targetPath = targetPath.replace(new RegExp(/([\\/].[\\/])/g), '/'); // remove "/./"
 
-    fileExists(sourcePath)
-        .then( function(){
-            var newImage = imageMagick(sourcePath);
-            // apply quality
-            if( image.quality !== null )
-            {
-                newImage.quality( image.quality );
-            }
-            // apply options
-            if( typeof image.options != "undefined" && image.options !== null )
-            {
-                Object.keys(image.options).forEach(function(key) {
-                    try
+    makeDir(targetPath)
+        .then(function(){
+            fileExists(sourcePath)
+                .then( function(){
+                    var newImage = imageMagick(sourcePath);
+                    // apply quality
+                    if( image.quality !== null )
                     {
-                        console.log( "    -option '" + key + "': '" + (image.options[key]||[]).join(",") + "'" );
-                        if( typeof newImage[key] != "undefined" )
+                        newImage.quality( image.quality );
+                    }
+                    // apply options
+                    if( typeof image.options != "undefined" && image.options !== null )
+                    {
+                        Object.keys(image.options).forEach(function(key) {
+                            try
+                            {
+                                console.log( "    -option '" + key + "': '" + (image.options[key]||[]).join(",") + "'" );
+                                if( typeof newImage[key] != "undefined" )
+                                {
+                                    newImage[key].apply(newImage, image.options[key] || []);
+                                }
+                            }
+                            catch( e )
+                            {
+                                display.warning("Option '" + key + "': " + e.message);
+                            }
+                        });
+                    }
+                    // resize (proportionally or not)
+                    if( image.proportional != null && (image.proportional == "true" || image.proportional === true) )
+                    {
+                        newImage.resize(width, height);
+                    }
+                    else
+                    {
+                        newImage.resizeExact(width, height);
+                    }
+                    newImage.write(targetPath, function(err) {
+                        if (err)
                         {
-                            newImage[key].apply(newImage, image.options[key] || []);
+                            display.error(err);
+                            deferred.resolve();
+                        } else {
+                            deferred.resolve();
+                            display.success(targetPath + ' ('+image.resolution+') created');
                         }
-                    }
-                    catch( e )
-                    {
-                        display.warning("Option '" + key + "': " + e.message);
-                    }
-                });
-            }
-            if( image.proportional != null && (image.proportional == "true" || image.proportional === true) )
-            {
-                newImage.resize(width, height);
-            }
-            else
-            {
-                newImage.resizeExact(width, height);
-            }
-            newImage.write(targetPath, function(err) {
-                if (err) {
-                    deferred.reject(err);
-                } else {
+                    });
+                })
+                .catch(function (error) {
+                    // warn the user but don´t abort execution
+                    display.warning('Source image "' + sourcePath + '" does not exist.');
                     deferred.resolve();
-                    display.success(targetPath + ' ('+image.resolution+') created');
-                }
-            });
-        })
-        .catch(function (error) {
-            // warn the user but don´t abort execution
-            display.warning('Source image "' + sourcePath + '" does not exist.');
-            deferred.resolve();
-        })
-        .done();
+                })
+                .done();
+        });
 
     return deferred.promise;
 };
@@ -364,16 +379,49 @@ var generateImage = function (image, config)
  * @param  {Object} filePath
  * @return {Promise}
  */
-var fileExists = function (filePath) {
+var fileExists = function (filePath)
+{
     var deferred = Q.defer();
 
-    fs.exists(filePath, function (exists) {
+    fs.exists(filePath, function (exists)
+    {
         if (exists) {
             deferred.resolve();
         } else {
             deferred.reject();
         }
     });
+    return deferred.promise;
+};
+
+/**
+ * Removes the filename from path and creates the directories if they don´t exist.
+ * Depends on mkdirp (https://github.com/substack/node-mkdirp).
+ *
+ * @param  {Object} filePath
+ * @return {Promise}
+ */
+var makeDir = function (filePath)
+{
+    var deferred = Q.defer();
+
+    // get base path of target file
+    filePath = filePath.replace(new RegExp(/((\/||\\)[^\\/]*\.[^\\/]*$)/g), '');
+
+    mkdirp(filePath, function (error, made)
+    {
+        if( error == null ){
+            if( made != null )
+            {
+                console.log("    Created new directory '"+made+"'.");
+            }
+            deferred.resolve();
+        } else {
+            display.error("    Could not create target directory '"+filePath+"'.");
+            deferred.reject(error.message);
+        }
+    });
+
     return deferred.promise;
 };
 
