@@ -277,7 +277,7 @@ var generateImages = function (config)
         });
         all.push(sequence);
     });
-    Q.all(all).then(function () {
+    Q.allSettled(all).then(function () {
         if( imagesCounter == 0 )
         {
             console.log("  \n    No images matching the tags '"+settings.TAGS.join(",")+"' found.");
@@ -295,6 +295,52 @@ var generateImages = function (config)
  * @return {Promise}
  */
 var generateImage = function (image, config)
+{
+    // size
+    var _wh = image.resolution.split("x");
+    var width = _wh[0];
+    var height = _wh[1];
+
+    var basePath = config.basePath == null ? "" : config.basePath;
+    // ensure ending slash
+    basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + path.sep : basePath;
+    basePath = path.normalize(basePath);
+
+    // source path
+    var sourcePath = basePath + image.sourcePath;
+    // replace aliases
+    _(config.aliases).forEach(function (alias) {
+        sourcePath = sourcePath.split(alias.name).join(alias.path);
+    });
+    sourcePath = path.normalize(sourcePath);
+
+    // target path
+    var targetPath = basePath + image.targetPath;
+    // replace aliases
+    _(config.aliases).forEach(function (alias) {
+        targetPath = targetPath.split(alias.name).join(alias.path);
+    });
+    targetPath = path.normalize(targetPath);
+
+    return makeDir(targetPath)
+        .then( function(){ return fileExists(sourcePath); } )
+        .then( function(){ return resizeImage(image, config); } )
+        .then( function(){ return optimizeImage(targetPath, config); } )
+        .catch(function (error) {
+            // warn the user (hint: you should make sure the parent sequence uses Q.allSettled())
+            display.warning('Source image "' + sourcePath + '" does not exist.');
+        });
+};
+
+/**
+ * Resizes and image with imagemagic.
+ * Depends on the "gm" node module.
+ *
+ * @param  {string} filePath
+ * @param  {object} config
+ * @return {Promise}
+ */
+var resizeImage = function (image, config)
 {
     var deferred = Q.defer();
 
@@ -324,73 +370,55 @@ var generateImage = function (image, config)
     });
     targetPath = path.normalize(targetPath);
 
-    makeDir(targetPath)
-        .then(function(){
-            var makeDirDeferred = Q.defer();
-            fileExists(sourcePath)
-                .then( function(){
-                    var makeImageDeferred = Q.defer();
-                    // Create empty image file (ImageMagic sometimes writes broken png data if the file does not
-                    // yet exist - I honestly don´t know why).
-                    fs.closeSync(fs.openSync(targetPath, 'w'));
-                    // create image
-                    var newImage = imageMagick(sourcePath);
-                    // apply quality
-                    if( image.quality !== null )
-                    {
-                        newImage.quality( image.quality );
-                    }
-                    // apply options
-                    if( typeof image.options != "undefined" && image.options !== null )
-                    {
-                        Object.keys(image.options).forEach(function(key) {
-                            try
-                            {
-                                console.log( "    -option '" + key + "': '" + (image.options[key]||[]).join(",") + "'" );
-                                if( typeof newImage[key] != "undefined" )
-                                {
-                                    newImage[key].apply(newImage, image.options[key] || []);
-                                }
-                            }
-                            catch( e )
-                            {
-                                display.warning("Option '" + key + "': " + e.message);
-                            }
-                        });
-                    }
-                    // resize (proportionally or not)
-                    if( image.proportional != null && (image.proportional == "true" || image.proportional === true) )
-                    {
-                        newImage.resize(width, height);
-                    }
-                    else
-                    {
-                        newImage.resizeExact(width, height);
-                    }
-                    newImage.write(targetPath, function(err) {
-                        if (err)
-                        {
-                            display.error(err);
-                            makeDirDeferred.resolve();
-                        } else {
-                            makeDirDeferred.resolve();
-                            display.success(targetPath + ' ('+image.resolution+') created');
-                        }
-                    });
-                    return makeImageDeferred.promise;
-                })
-                .catch(function (error) {
-                    // warn the user but don´t abort execution
-                    display.warning('Source image "' + sourcePath + '" does not exist.');
-                    makeDirDeferred.resolve();
-                })
-            return makeDirDeferred.promise;
-        })
-        .then( function(){ optimizeImage(targetPath, config); deferred.resolve() } )
-
-
+    // Create empty image file (ImageMagic sometimes writes broken png data if the file does not
+    // yet exist - I honestly don´t know why).
+    fs.closeSync(fs.openSync(targetPath, 'w'));
+    // create image
+    var newImage = imageMagick(sourcePath);
+    // apply quality
+    if( image.quality !== null )
+    {
+        newImage.quality( image.quality );
+    }
+    // apply options
+    if( typeof image.options != "undefined" && image.options !== null )
+    {
+        Object.keys(image.options).forEach(function(key) {
+            try
+            {
+                console.log( "    -option '" + key + "': '" + (image.options[key]||[]).join(",") + "'" );
+                if( typeof newImage[key] != "undefined" )
+                {
+                    newImage[key].apply(newImage, image.options[key] || []);
+                }
+            }
+            catch( e )
+            {
+                display.warning("Option '" + key + "': " + e.message);
+            }
+        });
+    }
+    // resize (proportionally or not)
+    if( image.proportional != null && (image.proportional == "true" || image.proportional === true) )
+    {
+        newImage.resize(width, height);
+    }
+    else
+    {
+        newImage.resizeExact(width, height);
+    }
+    newImage.write(targetPath, function(err) {
+        if (err)
+        {
+            display.error(err);
+            deferred.resolve();
+        } else {
+            deferred.resolve();
+            display.success(targetPath + ' ('+image.resolution+') created');
+        }
+    });
     return deferred.promise;
-};
+}
 
 /**
  * Optimizes a png file with optipng and a jpeg file with jpegtran.
