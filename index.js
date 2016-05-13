@@ -325,7 +325,16 @@ var generateImage = function (image, config)
     return makeDir(targetPath)
         .then( function(){ return fileExists(sourcePath); } )
         .then( function(){ return resizeImage(image, config); } )
-        .then( function(){ return optimizeImage(targetPath, config); } )
+        .then( function(){
+            if( image.optimize == null || ( image.optimize != "false" && image.optimize != false ) )
+            {
+                return optimizeImage(targetPath, config);
+            }
+            else
+            {
+                return true;
+            }
+        })
         .catch(function (error) {
             // warn the user (hint: you should make sure the parent sequence uses Q.allSettled())
             display.warning('Source image "' + sourcePath + '" does not exist.');
@@ -381,15 +390,24 @@ var resizeImage = function (image, config)
         newImage.quality( image.quality );
     }
     // apply options
+    var options = null;
+    if( typeof config.options != "undefined" && config.options !== null )
+    {
+        options = _.extend( options || {}, config.options );
+    }
     if( typeof image.options != "undefined" && image.options !== null )
     {
-        Object.keys(image.options).forEach(function(key) {
+        options = _.extend( options || {}, image.options );
+    }
+    if( options !== null )
+    {
+        Object.keys(options).forEach(function(key) {
             try
             {
-                console.log( "    -option '" + key + "': '" + (image.options[key]||[]).join(",") + "'" );
+                console.log( "    -option '" + key + "': '" + (options[key]||[]).join(",") + "'" );
                 if( typeof newImage[key] != "undefined" )
                 {
-                    newImage[key].apply(newImage, image.options[key] || []);
+                    newImage[key].apply(newImage, options[key] || []);
                 }
             }
             catch( e )

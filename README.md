@@ -32,10 +32,14 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
             "jpgtran" : "-copy none -optimize"
         },
 
+        "options": {
+            "unsharp" : [1.5, 1, 0.7, 0.02]
+        },
+
         "images":
         [
             { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.jpg", "resolution":"1024x768" },
-            { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-2048x1536.jpg", "resolution":"2048x1536", "proportional" : "false", "quality" : 100 },
+            { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-2048x1536.jpg", "resolution":"2048x1536", "proportional" : "false", "quality" : 100, "optimize" : false },
             {
                 "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-lowq-flipped.jpg", "resolution":"2048x1536", "proportional" : "false",
                 "options": {
@@ -48,10 +52,12 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
         "defaultBuildTags" : "all"
     }
     ```
-   * "optimize" is an optional object which defines whether or not to run image optimizations (optipng and jpgtran). Set them false or delete an entry to avoid optimization. You can use all options documented on the optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and jpgtran (http://gsp.com/cgi-bin/man.cgi?topic=jpegtran) websites.
-   * The "proportional" key is optional (default is false).
-   * The "quality" key is optional.
-   * The "options" key is optional and you can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html
+   * "optimize" is an optional object which defines whether or not to run image optimizations (optipng and jpgtran). Set them false or delete an entry to avoid optimization for all images. You can use all options documented on the optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and jpgtran (http://gsp.com/cgi-bin/man.cgi?topic=jpegtran) websites.
+   * "options" is an optional object which defines the default resize options (ImageMagic/GraphicsMagic) for all images. You can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html. Use Null or an empty Array if a function has no parameters.
+   * images: The "proportional" key is optional (default is false).
+   * images: The "quality" key is optional.
+   * images: The "optimize" key is optional (default is true, set it to false to exclude this image from optimization with jpgtran or optipng).
+   * images: The "options" key is optional and will extend (be merged with) the global "options" object. You can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html
 
 3. Run it with these (optional) parameters:
     ```
