@@ -5,7 +5,7 @@ An generic image resizing tool based on node.js
 ### Setup
 1. Install ImageMagic binaries from http://www.imagemagick.org/script/binary-releases.php
 
-2. `npm install https://github.com/moderna/ma-image-resize-tool.git --save`
+2. `npm install https://github.com/moderna/ma-image-resize-tool.git`
 
 ### Use as Commandline tool
 1. Create a config-local.json (we recommend to add this to your .gitignore file). Vales in config-local.json will overwrite values in config.json (see "BuildTags" as example).
@@ -38,6 +38,7 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
 
         "images":
         [
+            { "tags" : "all", "sourcePath" : "./testDirAllToJpg/*", "targetPath" : "testOutput/jpgs/*.jpg", "resolution":"800x600" },
             { "tags" : "all", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-1024x768.jpg", "resolution":"1024x768" },
             { "tags" : "all,test", "sourcePath" : "<testImage>", "targetPath" : "testOutput/Test-2048x1536.jpg", "resolution":"2048x1536", "proportional" : "false", "quality" : 100, "optimize" : false },
             {
@@ -54,10 +55,14 @@ The "<" and ">" in the alias are optional (added to increase visibility). You ca
     ```
    * "optimize" is an optional object which defines whether or not to run image optimizations (optipng and jpgtran). Set them false or delete an entry to avoid optimization for all images. You can use all options documented on the optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and jpgtran (http://gsp.com/cgi-bin/man.cgi?topic=jpegtran) websites.
    * "options" is an optional object which defines the default resize options (ImageMagic/GraphicsMagic) for all images. You can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html. Use Null or an empty Array if a function has no parameters.
-   * images: The "proportional" key is optional (default is false).
-   * images: The "quality" key is optional.
-   * images: The "optimize" key is optional (default is true, set it to false to exclude this image from optimization with jpgtran or optipng).
-   * images: The "options" key is optional and will extend (be merged with) the global "options" object. You can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html
+   * images: "tags" defines the tags an image has (comma separated). You can choose in the config or with the --tags parameter which tags to build.
+   * images: "sourcePath" has to be a file path or a glob path (see: https://www.npmjs.com/package/glob).
+   * images: "targetPath" has to be a real file path (no glob support) and end with ```*.<extension>``` or ```<filename>.<extension>``` (example: testDir/*.jpg, *.png, testDir/myImg.png ...). The extension defines the output image format.
+   * images: "resolution" defines the images' target resolution or bounding box (if "proportional" is true)
+   * images: "proportional" is optional (default is false). Defines whether or not to resize the image proportionally. The "resolution" is used as bounding box if "proportional" is true.
+   * images: "quality" is optional and defines the jpg or png quality (range 0 to 100).
+   * images: "optimize" is optional (default is true, set it to false to exclude this image from optimization with jpgtran or optipng).
+   * images: "options" is optional and will extend (be merged with) the global "options" object. You can use any of the option functions documented here: https://aheckmann.github.io/gm/docs.html
 
 3. Run it with these (optional) parameters:
     ```

@@ -1,14 +1,15 @@
-var fs     = require('fs');
-var path   = require('path');
-var gm     = require('gm');
+var fs          = require('fs');
+var path        = require('path');
+var gm          = require('gm');
 var imageMagick = gm.subClass({imageMagick: true});
-var colors = require('colors');
-var _      = require('underscore');
-var Q      = require('q');
-var mkdirp = require('mkdirp');
-var execFile = require('child_process').execFile;
-var jpegtran = require('jpegtran-bin');
-var optipng = require('optipng-bin');
+var colors      = require('colors');
+var _           = require('underscore');
+var Q           = require('q');
+var mkdirp      = require('mkdirp');
+var execFile    = require('child_process').execFile;
+var jpegtran    = require('jpegtran-bin');
+var optipng     = require('optipng-bin');
+var glob        = require("glob");
 
 /**
  * @var {Object} settings - default values of configuration (will be used if no commandline parameters are given)
@@ -19,6 +20,7 @@ settings.CONFIG_DATA = null; // used only if LOAD_CONFIGS_FROM_FILES is false
 settings.CONFIG_FILE = 'config.json';
 settings.CONFIG_LOCAL_FILE = 'config-local.json';
 settings.TAGS = ['all'];
+settings.ALIASES = []; // ToDo: support setting aliases in parameters
 
 /**
  * @var {Object} console utils
@@ -102,6 +104,14 @@ var readParameters = function (argv, settings)
             {
                 settings.TAGS = argv[index].split(",");
             }
+
+            // --alias
+            /** ToDo
+             if( argv[index-1] == "--alias" || argv[index-1] == "-alias" || argv[index-1] == "alias" )
+             {
+                 settings.ALIASES.push(argv[index]);
+             }
+             */
         }
     });
 
@@ -256,50 +266,50 @@ var readConfigLocal = function (config)
     return deferred.promise;
 };
 
-
 /**
- * Runs through all the images and resizes them.
+ * Runs through all the images and econverts their (possible) glob path into real paths.
  *
  * @param  {Object} config
  * @return {Promise}
  */
-var generateImages = function (config)
+var resolveImagePaths = function (config)
 {
-    console.log("\n  Resizing images: ")
+    console.log("\n  Resolving image paths...")
     var deferred = Q.defer();
     var sequence = Q();
     var all = [];
-    var imagesCounter = 0;
-    _(config.images).filter(function(image){ return _(image.tags.split(",")).intersection(settings.TAGS).length > 0 ? image : false; } ).forEach(function (image) {
-        sequence = sequence.then(function () {
-            imagesCounter++;
-            return generateImage(image, config);
+
+    // use glob to expand paths (also filter those with not matching tags while we are at it)
+    var images = [];
+    _(config.images)
+        .filter( function(image){ return _.isObject(image); } )
+        .filter( function(image){ return _(image.tags.split(",")).intersection(settings.TAGS).length > 0 ? image : false; } )
+        .forEach(function (image) {
+            all.push( resolveImagePath( image, config ).then( function(value){
+                images = images.concat( value );
+                return Q.defer().resolve(value);
+            } ) )
         });
-        all.push(sequence);
-    });
+
+
     Q.allSettled(all).then(function () {
-        if( imagesCounter == 0 )
-        {
-            console.log("  \n    No images matching the tags '"+settings.TAGS.join(",")+"' found.");
-        }
-        deferred.resolve();
+        deferred.resolve( {"images" : images, "config" : config} );
     });
+
     return deferred.promise;
 };
 
 /**
- * Resizes and creates a new icon in the platform's folder.
+ * Convert an images' glob (https://github.com/isaacs/node-glob) into relad paths.
  *
- * @param  {Object} image entry from config
- * @param  {Object} the whole config (used to extract aliases)
+ * @param  {Object} image
+ * @param  {Object} config
  * @return {Promise}
  */
-var generateImage = function (image, config)
+var resolveImagePath = function (image, config)
 {
-    // size
-    var _wh = image.resolution.split("x");
-    var width = _wh[0];
-    var height = _wh[1];
+    var deferred = Q.defer();
+    var images = [];
 
     var basePath = config.basePath == null ? "" : config.basePath;
     // ensure ending slash
@@ -322,13 +332,118 @@ var generateImage = function (image, config)
     });
     targetPath = path.normalize(targetPath);
 
-    return makeDir(targetPath)
-        .then( function(){ return fileExists(sourcePath); } )
+    // glob options (all glob paths have to use forward slashes)
+    var options = {
+        "cwd"  : basePath.split("\\").join("/"),
+        "root" : basePath.split("\\").join("/")
+    }
+
+    // use glob to expand paths (each path results in a copy of the image)
+    glob(sourcePath, options, function (error, files)
+    {
+        if( files != null )
+        {
+            _(files).forEach(function(file){
+                // copy the existing image
+                var newImage = _.extend( {}, image );
+                // set de-globbed source pth
+                newImage.sourcePath = file;
+                // resolve *.ext in target paths
+                var tmpTargetPath = targetPath;
+                var starExtension = tmpTargetPath.match(/(\*\.[a-zA-z0-9]+$)/g);
+                if( starExtension != null && starExtension.length == 1 )
+                {
+                    starExtension = starExtension[0];
+                    tmpTargetPath = path.parse(tmpTargetPath).dir + path.sep + path.parse(file).name + starExtension.replace("\*","");
+                }
+                newImage.targetPath = tmpTargetPath;
+                // add new image
+                images.push( newImage );
+            })
+            deferred.resolve( images );
+        }
+        else
+        {
+            display.error( error );
+            deferred.reject(error);
+        }
+    });
+
+    return deferred.promise;
+};
+
+/**
+ * Runs through all the images and resizes them.
+ *
+ * @param  {Object} with keys "images" and "config"
+ * @return {Promise}
+ */
+var generateImages = function (imagesAndConfig)
+{
+    console.log("\n  Resizing images: ");
+
+    var images = imagesAndConfig.images;
+    var config = imagesAndConfig.config;
+
+    var deferred = Q.defer();
+    var sequence = Q();
+    var all = [];
+    var imagesCounter = 0;
+
+    // use glob to expand paths (also filter those with not matching tags while we are at it)
+    /*
+     var images = [];
+     _(config.images)
+     .filter( function(image){ return _.isObject(image); } )
+     .filter( function(image){ return _(image.tags.split(",")).intersection(settings.TAGS).length > 0 ? image : false; } )
+     .forEach(function (image) {
+     // ToDo: expand path using globber
+     images.push(image);
+     });*/
+
+    if( images.length > 0 )
+    {
+        _(images).forEach(function (image){
+            sequence = sequence.then(function () {
+                return generateImage(image, config);
+            });
+            all.push(sequence);
+        });
+
+        Q.allSettled(all).then(function () {
+            deferred.resolve();
+        });
+    }
+    else
+    {
+        console.log("  \n    No images matching the tags '"+settings.TAGS.join(",")+"' found.");
+        deferred.resolve();
+    }
+
+    return deferred.promise;
+};
+
+/**
+ * Resizes and creates a new icon in the platform's folder.
+ *
+ * @param  {Object} image entry from config
+ * @param  {Object} the whole config (used to extract aliases)
+ * @return {Promise}
+ */
+var generateImage = function (image, config)
+{
+    // size
+    var _wh = image.resolution.split("x");
+    var width = _wh[0];
+    var height = _wh[1];
+
+    return makeDir(image.targetPath)
+        .then( function(){ return fileExists(image.sourcePath); } )
         .then( function(){ return resizeImage(image, config); } )
         .then( function(){
             if( image.optimize == null || ( image.optimize != "false" && image.optimize != false ) )
             {
-                return optimizeImage(targetPath, config);
+                return optimizeImage(image.targetPath, config);
             }
             else
             {
@@ -336,8 +451,9 @@ var generateImage = function (image, config)
             }
         })
         .catch(function (error) {
+            display.error(error);
             // warn the user (hint: you should make sure the parent sequence uses Q.allSettled())
-            display.warning('Source image "' + sourcePath + '" does not exist.');
+            display.warning('Source image "' + image.sourcePath + '" does not exist.');
         });
 };
 
@@ -357,27 +473,8 @@ var resizeImage = function (image, config)
     var _wh = image.resolution.split("x");
     var width = _wh[0];
     var height = _wh[1];
-
-    var basePath = config.basePath == null ? "" : config.basePath;
-    // ensure ending slash
-    basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + path.sep : basePath;
-    basePath = path.normalize(basePath);
-
-    // source path
-    var sourcePath = basePath + image.sourcePath;
-    // replace aliases
-    _(config.aliases).forEach(function (alias) {
-        sourcePath = sourcePath.split(alias.name).join(alias.path);
-    });
-    sourcePath = path.normalize(sourcePath);
-
-    // target path
-    var targetPath = basePath + image.targetPath;
-    // replace aliases
-    _(config.aliases).forEach(function (alias) {
-        targetPath = targetPath.split(alias.name).join(alias.path);
-    });
-    targetPath = path.normalize(targetPath);
+    var sourcePath = image.sourcePath;
+    var targetPath = image.targetPath;
 
     // Create empty image file (ImageMagic sometimes writes broken png data if the file does not
     // yet exist - I honestly don´t know why).
@@ -404,7 +501,7 @@ var resizeImage = function (image, config)
         Object.keys(options).forEach(function(key) {
             try
             {
-                console.log( "    -option '" + key + "': '" + (options[key]||[]).join(",") + "'" );
+                console.log( "  -option '" + key + "': '" + (options[key]||[]).join(",") + "'" );
                 if( typeof newImage[key] != "undefined" )
                 {
                     newImage[key].apply(newImage, options[key] || []);
@@ -572,6 +669,7 @@ var run = function()
         .then(configLocalFileExists)
         .then(readConfig)
         .then(readConfigLocal)
+        .then(resolveImagePaths)
         .then(generateImages)
         .catch(function (err) {
             if (err) {
