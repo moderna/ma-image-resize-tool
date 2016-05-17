@@ -38,6 +38,10 @@ display.error = function (str) {
     str = 'ERROR  '.red + str;
     console.log('  ' + str);
 };
+display.info = function (str) {
+    str = 'INFO  '.cyan + str;
+    console.log('  ' + str);
+};
 display.header = function (str) {
     console.log('');
     console.log(' ' + str.cyan.underline);
@@ -173,8 +177,8 @@ var configLocalFileExists = function ()
                 display.success(settings.CONFIG_LOCAL_FILE + ' exists');
                 deferred.resolve();
             } else {
-                display.error(settings.CONFIG_LOCAL_FILE + ' does not exist in "'+process.cwd()+'".');
-                deferred.reject();
+                display.info(settings.CONFIG_LOCAL_FILE + ' does not exist in "'+process.cwd()+'".');
+                deferred.resolve();
             }
         });
     }
@@ -231,30 +235,31 @@ var readConfigLocal = function (config)
     var deferred = Q.defer();
     if( settings.LOAD_CONFIGS_FROM_FILES == true )
     {
-        data = fs.readFile(settings.CONFIG_LOCAL_FILE, function (err, data) {
-            if (err) {
-                deferred.reject(err);
-            }
-            var configLocal = JSON.parse(data);
-            if(configLocal === false || configLocal == null)
-            {
-                deferred.reject("Parsing "+settings.CONFIG_LOCAL_FILE+" failed.");
+        fs.exists(settings.CONFIG_LOCAL_FILE, function (exists) {
+            if (exists) {
+                var data = fs.readFile(settings.CONFIG_LOCAL_FILE, function (err, data) {
+                    if (err) {
+                        deferred.reject(err);
+                    }
+                    var configLocal = JSON.parse(data);
+                    if(configLocal === false || configLocal == null)
+                    {
+                        deferred.reject("Parsing "+settings.CONFIG_LOCAL_FILE+" failed.");
+                    }
+                    else
+                    {
+                        display.success("Parsing "+settings.CONFIG_LOCAL_FILE+" succeeded.");
+
+                        // merge config and set basePath
+                        var finalConfig = _.extend( {}, config, configLocal );
+
+                        deferred.resolve( finalConfig );
+                    }
+                });
             }
             else
             {
-                display.success("Parsing "+settings.CONFIG_LOCAL_FILE+" succeeded.");
-
-                // merge config and set basePath
-                var finalConfig = _.extend( {}, config, configLocal );
-                if( finalConfig.basePath == null )
-                {
-                    finalConfig.basePath = path.normalize(process.cwd());
-                }
-
-                // log new working dir if available
-                console.log("  Base dir for paths in config is:\n   - " + finalConfig.basePath);
-
-                deferred.resolve( finalConfig );
+                deferred.resolve( config );
             }
         });
     }
@@ -262,6 +267,42 @@ var readConfigLocal = function (config)
     {
         deferred.resolve(settings.CONFIG_DATA);
     }
+
+    return deferred.promise;
+};
+
+/**
+ * Prepares the config for use (resolves basePath if not yet set, resolves aliases in aliases)
+ * @param config
+ * @returns {promise|*|exports.exports.currentlyUnhandled.promise|Q.promise}
+ */
+var prepareConfigs = function (config)
+{
+    var deferred = Q.defer();
+
+    // set base path (if not set in config or local-config)
+    if( config.basePath == null )
+    {
+        config.basePath = path.normalize(process.cwd() + path.sep + path.dirname(settings.CONFIG_FILE));
+    }
+
+    // log new working dir if available
+    console.log("  Base dir for paths in config is:\n   - " + config.basePath);
+
+    // remove comments from images
+    config.images = _(config.images).filter( function(image){ return _.isObject(image); } );
+
+    // remove comments from alaises
+    config.aliases = _(config.aliases).filter( function(alias){ return _.isObject(alias); } );
+
+    // resolve aliases in aliases
+    _(config.aliases).forEach(function (alias, index, aliases) {
+        _(aliases).forEach(function (alias) {
+            aliases[index].path = aliases[index].path.split(alias.name).join(alias.path);
+        });
+    });
+
+    deferred.resolve(config);
 
     return deferred.promise;
 };
@@ -285,7 +326,7 @@ var resolveImagePaths = function (config)
         .filter( function(image){ return _.isObject(image); } )
         .filter( function(image){ return _(image.tags.split(",")).intersection(settings.TAGS).length > 0 ? image : false; } )
         .forEach(function (image) {
-            all.push( resolveImagePath( image, config ).then( function(value){
+            all.push( resolveAliasedImagePaths( image, config ).then( function(value){
                 images = images.concat( value );
                 return Q.defer().resolve(value);
             } ) )
@@ -300,7 +341,63 @@ var resolveImagePaths = function (config)
 };
 
 /**
- * Convert an images' glob (https://github.com/isaacs/node-glob) into relad paths.
+ * Convert an images' path with aliases into real image paths.
+ *
+ * @param  {Object} image
+ * @param  {Object} config
+ * @return {Promise}
+ */
+var resolveAliasedImagePaths = function (image, config)
+{
+    var deferred = Q.defer();
+    var images = [];
+
+    // get all aliases which are in sourcePath ordered by their occurrence
+    var aliases = _.chain(config.aliases)
+        .filter( function (alias) {
+            return image.sourcePath.indexOf( alias.name ) != -1;
+        })
+        .sortBy(function (alias) {
+            return image.sourcePath.indexOf( alias.name );
+        }).value();
+    // group those aliases
+    if( aliases.length > 0 )
+    {
+        var aliaseGroups = _.groupBy(aliases, function(alias){ return alias.name; });
+        var firstAliasGroup = aliaseGroups[aliases[0].name];
+        var allPromises = [];
+        // ToDo: support multiple aliases in sourcePath
+        // Only the first alias will be expanded and tested
+        _(firstAliasGroup).forEach( function(alias){
+            // Create a copy of config with the alias of the first group as first alias.
+            // We rely on the fact that the first alias will overwrite all identical aliases after it.
+            var newConfig = _.extend({}, config);
+            newConfig.aliases = [alias].concat( config.aliases );
+            allPromises.push( resolveImagePath( image, newConfig).then( function(value){
+                // add found images to images array
+                images = images.concat(value);
+            }) );
+        });
+
+        Q.allSettled(allPromises).then(function (){
+            // remove duplicates (paths with equal filename in sourcePath are considered duplicate)
+            images.reverse(); // _.unique keeps the first found value but we want the last to be kept, thus we reverse it.
+            images = _.unique(images, false, function(img){ return path.basename(img.sourcePath) });
+            images.reverse();
+            // return images list result
+            deferred.resolve( images );
+        });
+    }
+    else
+    {
+        // image without aliases in sourcePath
+    }
+
+    return deferred.promise;
+};
+
+/**
+ * Convert an images' glob (https://github.com/isaacs/node-glob) into real paths.
  *
  * @param  {Object} image
  * @param  {Object} config
@@ -339,6 +436,7 @@ var resolveImagePath = function (image, config)
     }
 
     // use glob to expand paths (each path results in a copy of the image)
+    sourcePath = sourcePath.split("\\").join("/"); // all glob paths have to use forward slashes
     glob(sourcePath, options, function (error, files)
     {
         if( files != null )
@@ -346,7 +444,7 @@ var resolveImagePath = function (image, config)
             _(files).forEach(function(file){
                 // copy the existing image
                 var newImage = _.extend( {}, image );
-                // set de-globbed source pth
+                // set de-globbed source path
                 newImage.sourcePath = file;
                 // resolve *.ext in target paths
                 var tmpTargetPath = targetPath;
@@ -360,6 +458,7 @@ var resolveImagePath = function (image, config)
                 // add new image
                 images.push( newImage );
             })
+
             deferred.resolve( images );
         }
         else
@@ -388,18 +487,6 @@ var generateImages = function (imagesAndConfig)
     var deferred = Q.defer();
     var sequence = Q();
     var all = [];
-    var imagesCounter = 0;
-
-    // use glob to expand paths (also filter those with not matching tags while we are at it)
-    /*
-     var images = [];
-     _(config.images)
-     .filter( function(image){ return _.isObject(image); } )
-     .filter( function(image){ return _(image.tags.split(",")).intersection(settings.TAGS).length > 0 ? image : false; } )
-     .forEach(function (image) {
-     // ToDo: expand path using globber
-     images.push(image);
-     });*/
 
     if( images.length > 0 )
     {
@@ -669,6 +756,7 @@ var run = function()
         .then(configLocalFileExists)
         .then(readConfig)
         .then(readConfigLocal)
+        .then(prepareConfigs)
         .then(resolveImagePaths)
         .then(generateImages)
         .catch(function (err) {
