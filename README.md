@@ -27,7 +27,7 @@ The tool uses a config file in JSON format. Here is the simplest setup you can m
 2. Run it with this command
 ```
     ma-image-resize-tool --config path/to/your/config/config.json
-    ```
+```
     The path of the --config parameter is relative to the current working directory.
 
 
