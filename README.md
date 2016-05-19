@@ -12,27 +12,29 @@ An generic image resizing tool based on node.js
 ### Use as Commandline tool (that´s the tools primary purpose)
 
 The tool uses a config file in JSON format. Here is the simplest setup you can make:
+
 1. Create a "config.json" in your image source folder.
-```javascript
-{
-    "images":
-    [
-        { "sourcePath" : "./_screens/16to10/image.jpg", "targetPath" : "./someTargetDirectory/image.jpg", "resolution":"100x100" }
-    ]
-}
-```
-You may have noticed that the paths are all relative. The base for those paths is always the location of your "config.json" file (no matter which directory you call the tool from). You can of course use absolute paths too.
+    ```javascript
+    {
+        "images":
+        [
+            { "sourcePath" : "./_screens/16to10/image.jpg", "targetPath" : "./someTargetDirectory/image.jpg", "resolution":"100x100" }
+        ]
+    }
+    ```
+    You may have noticed that the paths are all relative. The base for those paths is always the location of your "config.json" file (no matter which directory you call the tool from). You can of course use absolute paths too.
 
 2. Run it with this command
-```
-ma-image-resize-tool --config path/to/your/config/config.json
-```
-The path of the --config parameter is relative to the current working directory.
+    ```
+    ma-image-resize-tool --config path/to/your/config/config.json
+    ```
+    The path of the --config parameter is relative to the current working directory.
 
 
 ### Advanced config files
 To help with version control the tool supports two config files: "config.json" and "config-local.json". Values in config-local.json will be merged with (overwrite) values in config.json. We recommend to add "config-local.json" to your .gitignore file and store only workstation specific configs in it.
 Use the "--config-local" parameter to specify the location of "config-local.json" (the path is relative to the current working directory).
+
 Here is an example of a config-local.json file (don´t forget to remove the comments if you copy it):
 ```javascript
 {
@@ -209,6 +211,7 @@ A complete "config.json" file (all options are used here):
 ```
 
 Run it with these (optional) parameters:
+
     ```
     ma-image-resize-tool --config config.json --config-local config-local.json --alias "<language>" "en,de" --tags "all,test"
     ```
