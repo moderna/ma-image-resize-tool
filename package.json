@@ -1,7 +1,7 @@
 {
   "name": "ma-image-resize-tool",
   "version": "3.0.0",
-  "description": "A generic image resizing tool based on node.js optimzed for making mobile app screenshots and icons.",
+  "description": "A generic image resizing tool based on node.js optimized for making mobile app screenshots and icons.",
   "main": "index.js",
   "preferGlobal": "false",
   "directories": {

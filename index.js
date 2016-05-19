@@ -338,15 +338,12 @@ var prepareConfigs = function (config)
 
     // resolve aliases in aliases
     _(config.aliases)
-        // replace aliases in aliases
-        .forEach(function (targetAlias, index, aliases) {
-            _(aliases).forEach(function (sourceAlias) {
-                _(targetAlias.value).forEach(function (targetAliasValue, targetValueIndex) {
-                    _(sourceAlias.value).forEach(function (sourceAliasValue, sourceValueIndex) {
-                        aliases[index].value[targetValueIndex] = targetAliasValue.split(sourceAlias.name).join(sourceAliasValue);
-                    });
-                });
+        .forEach(function (alias, index, aliases) {
+            var resolvedValues = [];
+            alias.value.forEach(function (aliasValue) {
+                resolvedValues = resolvedValues.concat( resolveAliases( aliasValue, _.without(aliases,alias) ) );
             });
+            alias.value = resolvedValues;
         });
 
     deferred.resolve(config);
