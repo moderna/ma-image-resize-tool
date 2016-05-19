@@ -6,10 +6,15 @@ var colors      = require('colors');
 var _           = require('underscore');
 var Q           = require('q');
 var mkdirp      = require('mkdirp');
+var exec        = require('child_process').exec;
 var execFile    = require('child_process').execFile;
 var jpegtran    = require('jpegtran-bin');
 var optipng     = require('optipng-bin');
 var glob        = require("glob");
+
+var minimatch = require("minimatch");
+var Minimatch = minimatch.Minimatch;
+
 
 /**
  * @var {Object} settings - default values of configuration (will be used if no commandline parameters are given)
@@ -19,8 +24,8 @@ settings.LOAD_CONFIGS_FROM_FILES = true;
 settings.CONFIG_DATA = null; // used only if LOAD_CONFIGS_FROM_FILES is false
 settings.CONFIG_FILE = 'config.json';
 settings.CONFIG_LOCAL_FILE = 'config-local.json';
-settings.TAGS = ['all'];
-settings.ALIASES = []; // ToDo: support setting aliases in parameters
+settings.TAGS = [];
+settings.ALIASES = [];
 
 /**
  * @var {Object} console utils
@@ -54,12 +59,14 @@ display.header = function (str) {
  * @param {string} configPath
  * @param {string} configLocalPath
  * @param {string} tags
+ * @param {Array} aliases
  */
-var configure = function( configPath, configLocalPath, tags )
+var configure = function( configPath, configLocalPath, tags, aliases )
 {
     settings.CONFIG_FILE = (typeof configPath != "undefined" && configPath != null ) ? configPath : settings.CONFIG_LOCAL_FILE;
     settings.CONFIG_LOCAL_FILE = (typeof configLocalPath != "undefined" && configLocalPath != null ) ? configLocalPath : settings.CONFIG_LOCAL_FILE;
-    settings.TAGS = (typeof tags != "undefined" && tags != null ) ? tags.split(",") : settings.CONFIG_LOCAL_FILE;
+    settings.TAGS = (typeof tags != "undefined" && tags != null ) ? tags.split(",") : [];
+    settings.ALIASES = settings.ALIASES.concat( typeof aliases != "undefined" && aliases != null ? aliases : [] );
     settings.LOAD_CONFIGS_FROM_FILES = true;
 }
 
@@ -68,14 +75,15 @@ var configure = function( configPath, configLocalPath, tags )
  *
  * @param {Object} configPath
  * @param {Object} configLocalPath
- * @param {string} tags
+ * @param {Array} tags
+ * @param {Array} aliases
  */
-var configureWithData = function( configData, configLocalData, tags )
+var configureWithData = function( configData, configLocalData, tags, aliases )
 {
     settings.CONFIG_DATA = _.extend( {}, configData, configLocalData || {} );
-    settings.TAGS = (typeof tags != "undefined" && tags != null ) ? tags.split(",") : settings.CONFIG_LOCAL_FILE;
+    settings.TAGS = typeof tags != "undefined" && tags != null ? tags : [];
     settings.LOAD_CONFIGS_FROM_FILES = false;
-
+    settings.ALIASES = typeof aliases != "undefined" && aliases != null ? aliases : [];
 }
 
 /**
@@ -89,7 +97,7 @@ var readParameters = function (argv, settings)
 {
     argv.forEach(function (val, index, array)
     {
-        if( index > 1 && index%2 != 0) // index 3,5,7, ...
+        if( index > 1) // index 2,3,4,5,6 ...
         {
             // --config
             if( argv[index-1] == "--config" || argv[index-1] == "-config" || argv[index-1] == "config" )
@@ -110,12 +118,10 @@ var readParameters = function (argv, settings)
             }
 
             // --alias
-            /** ToDo
-             if( argv[index-1] == "--alias" || argv[index-1] == "-alias" || argv[index-1] == "alias" )
-             {
-                 settings.ALIASES.push(argv[index]);
-             }
-             */
+            if( argv[index-2] == "--alias" || argv[index-2] == "-alias" || argv[index-2] == "alias" )
+            {
+                settings.ALIASES.push( { "name" : argv[index-1], "value" : argv[index].split(",") } );
+            }
         }
     });
 
@@ -283,24 +289,65 @@ var prepareConfigs = function (config)
     // set base path (if not set in config or local-config)
     if( config.basePath == null )
     {
-        config.basePath = path.normalize(process.cwd() + path.sep + path.dirname(settings.CONFIG_FILE));
+        config.basePath = path.normalize(process.cwd() + path.sep + path.dirname(settings.CONFIG_FILE) + path.sep);
+    }
+    // ensure that base path ends with a slash
+    if( config.basePath != "" &&
+        config.basePath.charAt(config.basePath.length-1) != "/" &&
+        config.basePath.charAt(config.basePath.length-1) != "\\" )
+    {
+        config.basePath + path.sep;
     }
 
     // log new working dir if available
     console.log("  Base dir for paths in config is:\n   - " + config.basePath);
 
+    // get tags from config
+    if( !_.isArray(settings.TAGS) || settings.TAGS.length == 0 )
+    {
+        if( config.tags != null && config.tags.length > 0 )
+        {
+            config.tags = config.tags.split(",");
+        }
+        if(_.isArray(config.tags) && config.tags.length > 0 )
+        {
+            settings.TAGS = config.tags;
+        }
+        else
+        {
+            settings.TAGS = ['all'];
+        }
+    }
+    console.log("  Tags: " + settings.TAGS.join(","));
+
     // remove comments from images
     config.images = _(config.images).filter( function(image){ return _.isObject(image); } );
+
+    // merge setting aliases with config aliases
+    config.aliases = _.extend( config.aliases, settings.ALIASES );
 
     // remove comments from alaises
     config.aliases = _(config.aliases).filter( function(alias){ return _.isObject(alias); } );
 
-    // resolve aliases in aliases
-    _(config.aliases).forEach(function (alias, index, aliases) {
-        _(aliases).forEach(function (alias) {
-            aliases[index].path = aliases[index].path.split(alias.name).join(alias.path);
+    // convert all alias values into array
+    config.aliases = _(config.aliases)
+        // convert strings in value to array
+        .forEach(function(alias, index, aliases){
+            aliases[index].value = _.isArray(alias.value) ? alias.value : [alias.value];
         });
-    });
+
+    // resolve aliases in aliases
+    _(config.aliases)
+        // replace aliases in aliases
+        .forEach(function (targetAlias, index, aliases) {
+            _(aliases).forEach(function (sourceAlias) {
+                _(targetAlias.value).forEach(function (targetAliasValue, targetValueIndex) {
+                    _(sourceAlias.value).forEach(function (sourceAliasValue, sourceValueIndex) {
+                        aliases[index].value[targetValueIndex] = targetAliasValue.split(sourceAlias.name).join(sourceAliasValue);
+                    });
+                });
+            });
+        });
 
     deferred.resolve(config);
 
@@ -308,7 +355,7 @@ var prepareConfigs = function (config)
 };
 
 /**
- * Runs through all the images and econverts their (possible) glob path into real paths.
+ * Runs through all the images and converts their (possible) glob path into real paths.
  *
  * @param  {Object} config
  * @return {Promise}
@@ -323,6 +370,13 @@ var resolveImagePaths = function (config)
     // use glob to expand paths (also filter those with not matching tags while we are at it)
     var images = [];
     _(config.images)
+        .forEach(function (image, index, imagesList) {
+            if( image.tags == null )
+            {
+                console.log("no tags");
+                imagesList[index].tags = "all"; // default tag images to "all"
+            }
+        })
         .filter( function(image){ return _.isObject(image); } )
         .filter( function(image){ return _(image.tags.split(",")).intersection(settings.TAGS).length > 0 ? image : false; } )
         .forEach(function (image) {
@@ -352,49 +406,140 @@ var resolveAliasedImagePaths = function (image, config)
     var deferred = Q.defer();
     var images = [];
 
-    // get all aliases which are in sourcePath ordered by their occurrence
-    var aliases = _.chain(config.aliases)
-        .filter( function (alias) {
-            return image.sourcePath.indexOf( alias.name ) != -1;
-        })
-        .sortBy(function (alias) {
-            return image.sourcePath.indexOf( alias.name );
-        }).value();
-    // group those aliases
-    if( aliases.length > 0 )
+    // resolve all aliases (glob notation is not resolved here)
+    var resolvedImageSourcePaths = resolveAliases( image.sourcePath, config.aliases );
+    var resolvedImageTargetPaths = resolveAliases( image.targetPath, config.aliases );
+
+    // create unique source and target path pairs (combine every resolvedImageSourcePath with every resolvedImageTargetPath)
+    var imagePaths = [];
+    _(resolvedImageSourcePaths).forEach(function(sourcePath){
+        _(resolvedImageTargetPaths).forEach(function(targetPath){
+            if( !path.isAbsolute(sourcePath) )
+            {
+                sourcePath = config.basePath + sourcePath;
+            }
+            if( !path.isAbsolute(targetPath) )
+            {
+                targetPath = config.basePath + targetPath;
+            }
+            imagePaths.push(
+                {
+                    "sourcePath" : path.normalize(sourcePath),
+                    "targetPath" : path.normalize(targetPath)
+                }
+            );
+        });
+    });
+
+    // run paths through glob
+    var allPromises = [];
+    if( imagePaths.length > 0 )
     {
-        var aliaseGroups = _.groupBy(aliases, function(alias){ return alias.name; });
-        var firstAliasGroup = aliaseGroups[aliases[0].name];
-        var allPromises = [];
-        // ToDo: support multiple aliases in sourcePath
-        // Only the first alias will be expanded and tested
-        _(firstAliasGroup).forEach( function(alias){
-            // Create a copy of config with the alias of the first group as first alias.
-            // We rely on the fact that the first alias will overwrite all identical aliases after it.
-            var newConfig = _.extend({}, config);
-            newConfig.aliases = [alias].concat( config.aliases );
-            allPromises.push( resolveImagePath( image, newConfig).then( function(value){
+        // resolve glob paths
+        _(imagePaths).forEach( function(imagePathPair){
+            var tmpImage = _.extend({},image,imagePathPair); // merge in sourcePath and targetPath
+            allPromises.push( resolveImagePath( tmpImage, config).then( function(value){
                 // add found images to images array
                 images = images.concat(value);
             }) );
         });
 
         Q.allSettled(allPromises).then(function (){
-            // remove duplicates (paths with equal filename in sourcePath are considered duplicate)
-            images.reverse(); // _.unique keeps the first found value but we want the last to be kept, thus we reverse it.
-            images = _.unique(images, false, function(img){ return path.basename(img.sourcePath) });
-            images.reverse();
+
+            // ToDo: Remove duplicates (paths with equal filename in the scope of one alias should be considered duplicate
+            //       and only the last one should be taken int account.
+            //       It´s an optimization to remove unnecessary create images.
+
             // return images list result
             deferred.resolve( images );
         });
     }
     else
     {
-        // image without aliases in sourcePath
+        // image without aliases in sourcePath or targetPath
+        deferred.resolve( [image] );
     }
 
     return deferred.promise;
 };
+
+/**
+ * Takes a text like "<root>/images/<dir>/<language>/test.jpg" and aliases like:
+ *  [
+ *   { "name" : "<root>",     "value" : "myHome" },
+ *   { "name" : "<dir>",      "value" : ["mum","dad"] },
+ *   { "name" : "<language>", "value" : ["en","de"] }
+ *  ]
+ *  and returns all possible combinations of aliases applied to the text in
+ *  the order of occurrence in the text from left to right (depth first).
+ *
+ *  The result for the example above would be:
+ *  [
+ *   "myHome/images/mum/en/test.jpg",
+ *   "myHome/images/mum/de/test.jpg",
+ *   "myHome/images/dad/en/test.jpg",
+ *   "myHome/images/dad/de/test.jpg"
+ *  ]
+ *
+ * @param text
+ * @param aliases
+ * @returns {Array}
+ */
+var resolveAliases = function(text, aliases)
+{
+    var results = [];
+
+    // Get all aliases which are in the text ordered by their occurrence (first order)
+    // and their order in aliases (second order).
+    var sortedAliases = _.chain(aliases)
+        // convert strings in value to array
+        .forEach(function(alias, index, aliases){
+            aliases[index].value = _.isArray(alias.value) ? alias.value : [alias.value];
+        })
+        // remove unused aliases
+        .filter( function (alias) {
+            return text.indexOf( alias.name ) != -1;
+        })
+        // sort by occurrence
+        .sortBy(function (alias) {
+            return text.indexOf( alias.name );
+        });
+    sortedAliases = sortedAliases.value();
+
+    // recursively resolve aliases
+    var recursiveAliases = function( text, aliases, aliasIndex, aliasPosition, results )
+    {
+        text = text.split(aliases[aliasIndex].name).join(aliases[aliasIndex].value[aliasPosition]);
+
+        if( aliasIndex == aliases.length-1 )
+        {
+            results.push( text );
+        }
+
+        if( aliasIndex+1 < aliases.length )
+        {
+            for(var i=0; i<aliases[aliasIndex+1].value.length; ++i)
+            {
+                recursiveAliases(text, aliases, aliasIndex+1, i, results);
+            }
+        }
+    }
+
+    if( sortedAliases.length > 0 )
+    {
+        for(var i=0; i<sortedAliases[0].value.length; ++i)
+        {
+            recursiveAliases( text, sortedAliases, 0, i, results );
+        }
+    }
+    else
+    {
+        // no aliases found
+        results.push(text);
+    }
+
+    return results;
+}
 
 /**
  * Convert an images' glob (https://github.com/isaacs/node-glob) into real paths.
@@ -408,35 +553,20 @@ var resolveImagePath = function (image, config)
     var deferred = Q.defer();
     var images = [];
 
-    var basePath = config.basePath == null ? "" : config.basePath;
-    // ensure ending slash
-    basePath = basePath != "" && basePath.charAt(basePath.length-1) != "/" && basePath.charAt(basePath.length-1) != "\\" ? basePath + path.sep : basePath;
-    basePath = path.normalize(basePath);
-
-    // source path
-    var sourcePath = basePath + image.sourcePath;
-    // replace aliases
-    _(config.aliases).forEach(function (alias) {
-        sourcePath = sourcePath.split(alias.name).join(alias.path);
-    });
-    sourcePath = path.normalize(sourcePath);
-
-    // target path
-    var targetPath = basePath + image.targetPath;
-    // replace aliases
-    _(config.aliases).forEach(function (alias) {
-        targetPath = targetPath.split(alias.name).join(alias.path);
-    });
-    targetPath = path.normalize(targetPath);
-
     // glob options (all glob paths have to use forward slashes)
     var options = {
-        "cwd"  : basePath.split("\\").join("/"),
-        "root" : basePath.split("\\").join("/")
+        "cwd"  : config.basePath.split("\\").join("/")
+        ,"root" : config.basePath.split("\\").join("/")
+        ,"nocase" : true    // ATTENTION: it fails to resolve on ABSOLUTE windows paths (C:/..) - see bug: https://github.com/isaacs/node-glob/issues/123
+        ,"realpath" : true  // needed to make paths absolute again (remove this once bug#123 is fixed)
     }
 
+    // ToDo: fix path resolving problem due to bug123 if the basePath drive letter is different to the absolute sourcePath drive letter on windows
+
     // use glob to expand paths (each path results in a copy of the image)
-    sourcePath = sourcePath.split("\\").join("/"); // all glob paths have to use forward slashes
+    var sourcePath = image.sourcePath.split("\\").join("/"); // all glob paths have to use forward slashes
+    // We remove the absolute portion of the path to evade bug#123 (https://github.com/isaacs/node-glob/issues/123) - remove this once bug#123 is fixed
+    sourcePath = sourcePath.split(options.cwd).join("");
     glob(sourcePath, options, function (error, files)
     {
         if( files != null )
@@ -444,10 +574,10 @@ var resolveImagePath = function (image, config)
             _(files).forEach(function(file){
                 // copy the existing image
                 var newImage = _.extend( {}, image );
-                // set de-globbed source path
+                // set glob-resolved source path
                 newImage.sourcePath = file;
                 // resolve *.ext in target paths
-                var tmpTargetPath = targetPath;
+                var tmpTargetPath = image.targetPath;
                 var starExtension = tmpTargetPath.match(/(\*\.[a-zA-z0-9]+$)/g);
                 if( starExtension != null && starExtension.length == 1 )
                 {
@@ -530,7 +660,7 @@ var generateImage = function (image, config)
         .then( function(){
             if( image.optimize == null || ( image.optimize != "false" && image.optimize != false ) )
             {
-                return optimizeImage(image.targetPath, config);
+                return optimizeImage(image.targetPath, config, 50);
             }
             else
             {
@@ -545,7 +675,7 @@ var generateImage = function (image, config)
 };
 
 /**
- * Resizes and image with imagemagic.
+ * Resizes and image with GraphicMagick.
  * Depends on the "gm" node module.
  *
  * @param  {string} filePath
@@ -558,67 +688,123 @@ var resizeImage = function (image, config)
 
     // size
     var _wh = image.resolution.split("x");
-    var width = _wh[0];
-    var height = _wh[1];
+    var width = _wh[0].replace(/([^0-9])/g,"");
+    var height = _wh[1].replace(/([^0-9])/g,"");
     var sourcePath = image.sourcePath;
     var targetPath = image.targetPath;
 
-    // Create empty image file (ImageMagic sometimes writes broken png data if the file does not
+    // Create empty image file (ImageMagic/GraphicsMagick sometimes writes broken png data if the file does not
     // yet exist - I honestly don´t know why).
     fs.closeSync(fs.openSync(targetPath, 'w'));
+
+    // change working dir and remember it
+    var workingDir = process.cwd();
+    process.chdir(config.basePath);
+
+    // error/finally function
+    var fin = function()
+    {
+        // reset working dir and return
+        process.chdir(workingDir);
+        deferred.resolve();
+    }
+
     // create image
     var newImage = imageMagick(sourcePath);
-    // apply quality
-    if( image.quality !== null )
+    newImage.size(function (err, size)
     {
-        newImage.quality( image.quality );
-    }
-    // apply options
-    var options = null;
-    if( typeof config.options != "undefined" && config.options !== null )
-    {
-        options = _.extend( options || {}, config.options );
-    }
-    if( typeof image.options != "undefined" && image.options !== null )
-    {
-        options = _.extend( options || {}, image.options );
-    }
-    if( options !== null )
-    {
-        Object.keys(options).forEach(function(key) {
-            try
-            {
-                console.log( "  -option '" + key + "': '" + (options[key]||[]).join(",") + "'" );
-                if( typeof newImage[key] != "undefined" )
-                {
-                    newImage[key].apply(newImage, options[key] || []);
-                }
-            }
-            catch( e )
-            {
-                display.warning("Option '" + key + "': " + e.message);
-            }
-        });
-    }
-    // resize (proportionally or not)
-    if( image.proportional != null && (image.proportional == "true" || image.proportional === true) )
-    {
-        newImage.resize(width, height);
-    }
-    else
-    {
-        newImage.resizeExact(width, height);
-    }
-    newImage.write(targetPath, function(err) {
         if (err)
         {
-            display.error(err);
-            deferred.resolve();
-        } else {
-            deferred.resolve();
-            display.success(targetPath + ' ('+image.resolution+') created');
+            display.error("Unknown source image size. " + err);
+            fin();
+        }
+        else
+        {
+            // command "convert" and source file
+            var convert = 'convert "' + sourcePath + '"';
+
+            // resize proportionally (default: false)
+            var proportional = typeof config.proportional == "undefined" ? false : config.proportional;
+            if( typeof image.proportional != "undefined" )
+            {
+                proportional = image.proportional;
+            }
+            if( proportional == false && image.resolution.indexOf("!") == -1  )
+            {
+                convert += ' -resize "' + image.resolution + '!" '; // "!" tells image magic to ignore proportions
+            }
+            else
+            {
+                convert += ' -resize "' + image.resolution + '" ';
+            }
+
+            // quality (range 0.0-1.0, default is 0.75)
+            var quality = Math.round(config.quality || 0.75) * 100;
+            if( typeof image.quality != "undefined" )
+            {
+                quality = Math.round(image.quality * 100);
+            }
+            convert += ' -quality ' + quality;
+
+            // round corner mask (contact me if you know how to do this in GraphicsMagick)
+            var roundCorners = config.roundCorners || null;
+            if( typeof image.roundCorners != "undefined" )
+            {
+                roundCorners = image.roundCorners;
+            }
+            if( roundCorners !== null && roundCorners !== false && roundCorners > 0.001 )
+            {
+                if( path.extname(targetPath) == ".jpg" || path.extname(targetPath) == ".jpeg" )
+                {
+                    display.warning("JPEG format does not support transparency, thus round corners are not possible.")
+                }
+                else
+                {
+                    // radios is percentage of smaller side (with or height)
+                    var radius = Math.min(width, height) * 0.5 * roundCorners;
+                    convert += ' ( +clone  -alpha extract';
+                    convert += '   -draw "fill black polygon 0,0 0,'+radius+' '+radius+',0 fill white circle '+radius+','+radius+' '+radius+',0"';
+                    convert += '   ( +clone -flip ) -compose Multiply -composite';
+                    convert += '   ( +clone -flop ) -compose Multiply -composite';
+                    convert += ' ) -alpha off -compose CopyOpacity -composite -filter cubic -define filter:b=0 -define filter:c=2.2 -define filter:blur=1.05 ';
+                }
+            }
+
+            // add user parameters
+            var parameters = _.extend()
+            if( image.imageMagicParameters != null )
+            {
+                convert += ' ' + image.imageMagicParameters;
+            }
+            else if( config.imageMagicParameters != null )
+            {
+                convert += ' ' + config.imageMagicParameters;
+            }
+
+            // output file
+            convert += ' "' + targetPath + '"';
+
+            // log
+            console.log( convert );
+
+            exec(convert, function(err) {
+                if (err)
+                {
+                    display.error(err);
+                    deferred.resolve();
+                }
+                else
+                {
+                    // reset working dir
+                    process.chdir(workingDir);
+
+                    display.success(targetPath + ' ('+image.resolution+') created');
+                    deferred.resolve();
+                }
+            });
         }
     });
+
     return deferred.promise;
 }
 
@@ -631,65 +817,70 @@ var resizeImage = function (image, config)
  * @param  {object} config
  * @return {Promise}
  */
-var optimizeImage = function (filePath, config)
+var optimizeImage = function (filePath, config, delayInMs)
 {
     var deferred = Q.defer();
 
-    fs.exists(filePath, function (exists)
-    {
-        switch( path.extname(filePath).toLowerCase() )
+    delayInMs = delayInMs || 50;
+
+    // added a delay to give the OS time to clean up the write lock on the image
+    setTimeout( function(){
+        fs.exists(filePath, function (exists)
         {
-            case ".png":
-                if( config.optimize && config.optimize.optipng != null && config.optimize.optipng !== false )
-                {
-                    var parameters = [];
-                    if( config.optimize.optipng.length > 0 )
+            switch( path.extname(filePath).toLowerCase() )
+            {
+                case ".png":
+                    if( config.optimize && config.optimize.optipng != null && config.optimize.optipng !== false )
                     {
-                        parameters = config.optimize.optipng.split(" ");
+                        var parameters = [];
+                        if( config.optimize.optipng.length > 0 )
+                        {
+                            parameters = config.optimize.optipng.split(" ");
+                        }
+                        parameters = parameters.concat(['-out', filePath, filePath]);
+                        execFile(optipng, parameters, function (err) {
+                            if( err != null )
+                            {
+                                display.error('optipng ' + parameters.join(" "));
+                                display.error(err);
+                            }
+                            else
+                            {
+                                console.log('    Image optimized with: "optipng ' + config.optimize.optipng + ' -out ..."');
+                            }
+                            deferred.resolve();
+                        });
                     }
-                    parameters = parameters.concat(['-out', filePath, filePath]);
-                    execFile(optipng, parameters, function (err) {
-                        if( err != null )
-                        {
-                            display.error('optipng ' + parameters.join(" "));
-                            display.error(err);
-                        }
-                        else
-                        {
-                            console.log('    Image optimized with: "optipng ' + config.optimize.optipng + ' -out ..."');
-                        }
-                        deferred.resolve();
-                    });
-                }
-                break;
-            case ".jpg":
-            case ".jpeg":
-                if( config.optimize && config.optimize.jpgtran != null && config.optimize.jpgtran !== false )
-                {
-                    var parameters = [];
-                    if( config.optimize.jpgtran.length > 0 )
+                    break;
+                case ".jpg":
+                case ".jpeg":
+                    if( config.optimize && config.optimize.jpgtran != null && config.optimize.jpgtran !== false )
                     {
-                        parameters = config.optimize.jpgtran.split(" ");
+                        var parameters = [];
+                        if( config.optimize.jpgtran.length > 0 )
+                        {
+                            parameters = config.optimize.jpgtran.split(" ");
+                        }
+                        parameters = parameters.concat(['-outfile', filePath, filePath]);
+                        execFile(jpegtran, parameters, function (err) {
+                            if( err != null )
+                            {
+                                display.error('jpegtran ' + parameters.join(" "));
+                                display.error(err);
+                            }
+                            else
+                            {
+                                console.log('    Image optimized with: "jpegtran ' + config.optimize.jpgtran + ' -outfile ..."');
+                            }
+                            deferred.resolve();
+                        });
                     }
-                    parameters = parameters.concat(['-outfile', filePath, filePath]);
-                    execFile(jpegtran, parameters, function (err) {
-                        if( err != null )
-                        {
-                            display.error('jpegtran ' + parameters.join(" "));
-                            display.error(err);
-                        }
-                        else
-                        {
-                            console.log('    Image optimized with: "jpegtran ' + config.optimize.jpgtran + ' -outfile ..."');
-                        }
-                        deferred.resolve();
-                    });
-                }
-                break;
-            default:
-                deferred.resolve();
-        }
-    });
+                    break;
+                default:
+                    deferred.resolve();
+            }
+        });
+    }, delayInMs );
 
     return deferred.promise;
 };
