@@ -12,9 +12,6 @@ var jpegtran    = require('jpegtran-bin');
 var optipng     = require('optipng-bin');
 var glob        = require("glob");
 
-var minimatch = require("minimatch");
-var Minimatch = minimatch.Minimatch;
-
 
 /**
  * @var {Object} settings - default values of configuration (will be used if no commandline parameters are given)
