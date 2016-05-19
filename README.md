@@ -70,7 +70,7 @@ A complete "config.json" file (all options are used here):
     //   ./target/dir/image-en.jpg
     //   ./target/dir/image-de.jpg
     //
-    // You can also defines alisaes in the commandline with one or
+    // You can also define aliases in the commandline with one or
     // more "--alias name value" parameters (Example: --alias <language> en,de).
     //
     "aliases":
@@ -95,8 +95,8 @@ A complete "config.json" file (all options are used here):
     // on png (optipng) and/or jepg images (jpgtran).
     // Set the value to false or delete an entry to avoid optimization for all images of that type.
     //
-    // The given value (string) is directly passed through to the given tool, thus can use all options documented for
-    // optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and
+    // The given value (string) is directly passed through to the given tool, thus can use all options
+    // documented for optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and
     // jpgtran (http://gsp.com/cgi-bin/man.cgi?topic=jpegtran).
     // Notice that "optipng" requires no default options. It therefore has an empty string as value.
     "optimize":
@@ -133,8 +133,8 @@ A complete "config.json" file (all options are used here):
     "proportional" : true,
 
     // This defines which images to resize.
-    // You can specify each image with it´s onw path or use glob paths (see: https://github.com/isaacs/node-glob)
-    // as "sourcePath".
+    // You can specify each image with it´s onw path or use glob paths
+    // (as https://github.com/isaacs/node-glob) as "sourcePath".
     "images":
     [
         // A comment
@@ -149,8 +149,10 @@ A complete "config.json" file (all options are used here):
             "tags" : "all,ios",
 
             // "sourcePath":
-            // It has to be an absolute or relative file path. It can use the "glob" path syntax (see: https://www.npmjs.com/package/glob).
-            // This path is relative to "basePath" or the location of "confiog.json" if "basePath" is not specified.
+            // It has to be an absolute or relative file path. It can use the "glob" path syntax
+            // (see: https://www.npmjs.com/package/glob).
+            // This path is relative to "basePath" or the location of "confiog.json" if "basePath" is
+            // not specified.
             "sourcePath" : "<source-screens-16:9>/screen1.png",
 
             // "targetPath":
@@ -159,7 +161,8 @@ A complete "config.json" file (all options are used here):
             // or
             //    [filename].[extension] (Example: testDir/myImage.png).
             // The [extension] part defines the output image format.
-            // The tool will automatically create all necessary folders and subfolders for the given targetPath.
+            // The tool will automatically create all necessary folders and subfolders for
+            // the given targetPath.
             "targetPath" : "../target/apple-appstore/<language>/screens/3.5-inch/screen1.png",
 
             // "resolution":
@@ -168,14 +171,15 @@ A complete "config.json" file (all options are used here):
             "resolution" : "960x640",
 
             // "optimize" (optional)
-            // Set it to false to exclude this image from optimization with jpgtran or optipng (default is true).
+            // Set it to false to exclude this image from optimization with jpgtran or
+            // optipng (default is true).
             "optimize"   : true,
 
             // imageMagicParameters": (optional)
             // Will replace the globally defined "imageMagicParameters" for this image.
             // You can use any parameter documented on http://www.imagemagick.org/script/command-line-options.php
             // except for -resize (which is used by the tool itself).
-            "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -grayscale", // Example: make the image grayscale
+            "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -grayscale", // Example: make grayscale
 
             // "roundCorners": (optional)
             // Will replace the globally defined "roundCorners" for this image.
