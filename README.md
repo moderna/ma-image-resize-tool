@@ -4,7 +4,8 @@ An generic image resizing tool based on node.js
 
 ### Setup
 1. Install ImageMagic binaries from http://www.imagemagick.org/script/binary-releases.php
-   On Windows make sure to tick the box "Install legacy utilities (e.g. convert)" during installation.
+
+   Make sure to tick the box "Install legacy utilities (e.g. convert)" during installation on windows.
 
 2. `npm install https://github.com/moderna/ma-image-resize-tool.git`
 
@@ -12,14 +13,14 @@ An generic image resizing tool based on node.js
 
 The tool uses a config file in JSON format. Here is the simplest setup you can make:
 1. Create a "config.json" in your image source folder.
-    ```javascript
+```javascript
     {
         "images":
         [
             { "sourcePath" : "./_screens/16to10/image.jpg", "targetPath" : "./someTargetDirectory/image.jpg", "resolution":"100x100" }
         ]
     }
-    ```
+```
     You may have noticed that the paths are all relative. The base for those paths is always the location of your "config.json" file (no matter which directory you call the tool from). You can of course use absolute paths too.
 
 2. Run it with this command
