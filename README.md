@@ -25,9 +25,9 @@ The tool uses a config file in JSON format. Here is the simplest setup you can m
     You may have noticed that the paths are all relative. The base for those paths is always the location of your "config.json" file (no matter which directory you call the tool from). You can of course use absolute paths too.
 
 2. Run it with this command
-```
+    ```
     ma-image-resize-tool --config path/to/your/config/config.json
-```
+    ```
     The path of the --config parameter is relative to the current working directory.
 
 
