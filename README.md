@@ -1,6 +1,6 @@
 # ma-image-resize-tool
 
-A generic image resizing tool based on node.js optimzed for making mobile app screenshots and icons. It´s supposed to make screenshot and icon generation easy and flexible (future proof).
+A generic image resizing tool based on node.js optimized for making mobile app screenshots and icons. It´s supposed to make screenshot and icon generation easy and flexible (future proof).
 
 ### Setup
 1. Install ImageMagic binaries from http://www.imagemagick.org/script/binary-releases.php
