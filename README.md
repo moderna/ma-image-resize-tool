@@ -1,6 +1,6 @@
 # ma-image-resize-tool
 
-An generic image resizing tool based on node.js
+A generic image resizing tool based on node.js optimzed for making mobile app screenshots and icons. It´s supposed to make screenshot and icon generation easy and flexible (future proof).
 
 ### Setup
 1. Install ImageMagic binaries from http://www.imagemagick.org/script/binary-releases.php
@@ -25,7 +25,7 @@ The tool uses a config file in JSON format. Here is the simplest setup you can m
     You may have noticed that the paths are all relative. The base for those paths is always the location of your "config.json" file (no matter which directory you call the tool from). You can of course use absolute paths too.
 
 2. Run it with this command
-    ```
+```
     ma-image-resize-tool --config path/to/your/config/config.json
     ```
     The path of the --config parameter is relative to the current working directory.
@@ -216,9 +216,9 @@ A complete "config.json" file (all options are used here):
 
 Run it with these (optional) parameters:
 
-    ```
+```
     ma-image-resize-tool --config config.json --config-local config-local.json --alias "<language>" "en,de" --tags "all,test"
-    ```
+```
 All parameters are optional:
    * Default for --config is "config.json"
    * Default for --config-local is "config-local.json"
@@ -229,20 +229,20 @@ All parameters are optional:
 1. Create the config.json and config-local.json file (see above) or use the configure() and configureWithData() methods.
 
 2. A: Run without any configs
-    ```javascript
+```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     maImageResizeTool.run();
-    ```
+```
 
 2. B: Run with config file paths set in js
-    ```javascript
+```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     maImageResizeTool.configure( "config.json", "config-local.json", "all,test", ["<language>", "en,de"] );
     maImageResizeTool.run();
-    ```javascript
+```
 
 2. C: Run with config data set in js
-    ```javascript
+```javascript
     var maImageResizeTool = require("ma-image-resize-tool");
     var config = {
         "aliases":
@@ -273,7 +273,7 @@ All parameters are optional:
 
     maImageResizeTool.configureWithData( config, configLocal, "all,test", ["<language>", "en,de"] );
     maImageResizeTool.run();
-    ```
+```
 
 ### Local Commandline Install
 If you are like us and don't like global package installs then please consider using these console command files to execute the module locally:
