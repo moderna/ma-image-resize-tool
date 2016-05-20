@@ -116,6 +116,14 @@ A complete "config.json" file (all options are used here):
     //
     // We recommend to use "-unsharp 1.5x1+0.7+0.02" for photoshop like results ;)
     // You can also skip this line (will result in default: "")
+    //
+    // Notice that these parameters are added AFTER the "-resize" command. ImageMagic executes the
+    // given command IN ORDER. Why this important?
+    // Here is an example (resize and rotate an image):
+    //   Image: { ... targetPath:"img_400x800.jpg", "resolution":"800x400", "imageMagicParameters" : "-rotate 90" }
+    //  This will give you an image with dimensions of 400x800, even though you
+    //  specified 800x400 as "resolution". That´s because ImageMagic first resizes
+    //  the image to "resolution" (800x400) and then executes "-rotate 90" afterwards.
     "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02",
 
     // Makes iOS app icon like round corners in your PNGs - default is 0.0 (no round corners)

@@ -717,6 +717,16 @@ var resizeImage = function (image, config)
             // command "convert" and source file
             var convert = 'convert "' + sourcePath + '"';
 
+            // add user pre parameters (these are not documented)
+            if( image.preImageMagicParameters != null )
+            {
+                convert += ' ' + image.preImageMagicParameters;
+            }
+            else if( config.preImageMagicParameters != null )
+            {
+                convert += ' ' + config.preImageMagicParameters;
+            }
+
             // resize proportionally (default: false)
             var proportional = typeof config.proportional == "undefined" ? false : config.proportional;
             if( typeof image.proportional != "undefined" )
@@ -765,7 +775,6 @@ var resizeImage = function (image, config)
             }
 
             // add user parameters
-            var parameters = _.extend()
             if( image.imageMagicParameters != null )
             {
                 convert += ' ' + image.imageMagicParameters;
