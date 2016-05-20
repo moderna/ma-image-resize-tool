@@ -743,7 +743,7 @@ var resizeImage = function (image, config)
             }
 
             // quality (range 0.0-1.0, default is 0.75)
-            var quality = Math.round(config.quality || 0.75) * 100;
+            var quality = Math.round((config.quality || 0.75) * 100);
             if( typeof image.quality != "undefined" )
             {
                 quality = Math.round(image.quality * 100);
