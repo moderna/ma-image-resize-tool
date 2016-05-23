@@ -11,7 +11,7 @@ var execFile    = require('child_process').execFile;
 var jpegtran    = require('jpegtran-bin');
 var optipng     = require('optipng-bin');
 var glob        = require("glob");
-var fs          = require('fs-extra');
+var fse         = require('fs-extra');
 
 
 /**
@@ -104,6 +104,7 @@ var readParameters = function (argv, settings)
 
     var installLocation = null;
     var orientation = null;
+    var setupInfo = false;
 
     argv.forEach(function (val, index, array)
     {
@@ -121,6 +122,12 @@ var readParameters = function (argv, settings)
                 if( argv[index-1] == "--location" || argv[index-1] == "-location" || argv[index-1] == "location" )
                 {
                     installLocation = argv[index]
+                }
+
+                // --info
+                if( argv[index] == "--info" || argv[index] == "-info" || argv[index] == "info" )
+                {
+                    setupInfo = true;
                 }
             }
             // normal commandline
@@ -162,6 +169,22 @@ var readParameters = function (argv, settings)
     {
         display.header('Setup');
 
+        // check if info is required
+        if( setupInfo == true )
+        {
+            console.log( "    Environment variables have been set up." );
+            console.log( "    Now please use the 'setup' command in this window.");
+            console.log( "" );
+            console.log( "    Check https://github.com/moderna/ma-image-resize-tool for the docs." );
+            console.log( "" );
+            console.log( "    Examples:");
+            console.log( "      ma-image-resize-tool setup --orientation portrait");
+            console.log( "      ma-image-resize-tool setup --orientation landscape");
+            console.log( "      ma-image-resize-tool setup --orientation portrait --location yourRelativeInstallDir");
+            deferred.reject();
+            return deferred.promise;
+        }
+
         // check if orientation is set
         if(
             orientation == "landscape" ||
@@ -199,7 +222,7 @@ var setup = function ( orientation, installLocation )
     var targetDir = path.normalize(installLocation || process.cwd());
 
     // copy files
-    fs.copy(sourceDir, targetDir, function (err) {
+    fse.copy(sourceDir, targetDir, function (err) {
         if (err)
         {
             display.error("Error in setup.     \n      Copy\n        '" + sourceDir + "'\n      to\n        '" + targetDir + "'\n      failed:\n    " + err);
@@ -207,8 +230,37 @@ var setup = function ( orientation, installLocation )
         }
         else
         {
-            display.success("    Setup completed in '" + targetDir + "'.");
-            deferred.resolve();
+            var isWin = /^win/.test(process.platform);
+            var replacementPathSeparator = isWin ?  ";" : ":";
+            var replacementString = isWin ?  ";%PATH%" : ":$PATH";
+            var replacementStringRegExp = isWin ?  ";%PATH%" : ":\$PATH";
+
+            // patch "generate_image" paths
+            var targetDirCommandFile = isWin ? "#create_images.cmd" : "#create_images.command" ;
+            fs.readFile(targetDir + path.sep + targetDirCommandFile, 'utf8', function (err,data) {
+                if (err) {
+                    display.error("Error in setup.     \n      Updating PATH in '" + targetDirCommandFile + "' failed:\n    " + err);
+                    deferred.reject();
+                }
+                else
+                {
+                    var node_modules_dir = path.normalize(__dirname + path.sep + ".." + path.sep + ".bin");
+                    var replacement = replacementPathSeparator + path.relative(targetDir,node_modules_dir) + replacementString;
+                    var result = data.replace( new RegExp(replacementString,"g"), replacement );
+
+                    fs.writeFile(targetDir + path.sep + targetDirCommandFile, result, 'utf8', function (err) {
+                        if (err) {
+                            display.error("Error in setup.     \n      Updating PATH in '" + targetDirCommandFile + "' failed:\n    " + err);
+                            deferred.reject();
+                        }
+                        else
+                        {
+                            display.success("    Setup1 completed in '" + targetDir + "'.");
+                            deferred.resolve();
+                        }
+                    });
+                }
+            });
         }
     });
 

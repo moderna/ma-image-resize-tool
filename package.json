@@ -14,8 +14,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/moderna/ma-image-resize-tool.git"
   },
-  "keywords": [
-    "screenshot",
+  "keywords": [    "screenshot",
     "image",
     "resize",
     "image",
