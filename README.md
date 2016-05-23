@@ -30,6 +30,15 @@ The tool uses a config file in JSON format. Here is the simplest setup you can m
     ```
     The path of the --config parameter is relative to the current working directory.
 
+### Templates (optional setup)
+The tool includes config.json templates for mobile developers. These include icons, screenshots and promo gfx for Apple iOS, Google Play, Windows Store, Amazon, BlackBerry and Samsung.
+
+Here is the setup command:
+    ```
+    ma-image-resize-tool setup --orientation portrait --location yourInstallDir
+    ```
+    * "--orientation" has to be either "landscape" or "portrait"
+    * " --location" is optional (default is the current working directory)
 
 ### Advanced config files
 To help with version control the tool supports two config files: "config.json" and "config-local.json". Values in config-local.json will be merged with (overwrite) values in config.json. We recommend to add "config-local.json" to your .gitignore file and store only workstation specific configs in it.
@@ -288,20 +297,23 @@ If you are like us and don't like global package installs then please consider u
 
 Windows (console.cmd):
 ```
-    @echo off
-    %~d1
-    cd "%~p1"
-    SET PATH=./node_modules/.bin;%PATH%
-    call cmd
-    @echo on
+@echo off
+%~d1
+cd "%~p1"
+SET PATH=./node_modules/.bin;%PATH%
+:: Call image tool
+call ma-image-resize-tool --config source/config.json
+pause
+@echo on
 ```
 
 Mac (console.command):
 ```
-    #!/bin/sh
-    cd "$(dirname "$0")"
-    export PATH=./node_modules/.bin:$PATH
-    bash
+#!/bin/sh
+cd "$(dirname "$0")"
+export PATH=./node_modules/.bin:$PATH
+ma-image-resize-tool --config source/config.json
+bash
 ```
 
 ### Credits
