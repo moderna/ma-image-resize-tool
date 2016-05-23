@@ -255,7 +255,7 @@ var setup = function ( orientation, installLocation )
                         }
                         else
                         {
-                            display.success("    Setup1 completed in '" + targetDir + "'.");
+                            display.success("    Setup completed in '" + targetDir + "'.");
                             deferred.resolve();
                         }
                     });

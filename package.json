@@ -43,5 +43,9 @@
   },
   "bin": {
     "ma-image-resize-tool": "bin\\ma-image-resize-tool"
+  },
+  "scripts":
+  {
+      "postinstall" : "node postInstall.js"
   }
 }
