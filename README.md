@@ -9,6 +9,8 @@ A generic image resizing tool based on node.js optimized for making mobile app s
 
 2. `npm install https://github.com/moderna/ma-image-resize-tool.git`
 
+3. A "#setup-ma-image-tool" file is created if installed locally. Use it to call the "setup" command on local installs.
+
 ### Use as Commandline tool (that´s the tools primary purpose)
 
 The tool uses a config file in JSON format. Here is the simplest setup you can make:
