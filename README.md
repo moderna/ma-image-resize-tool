@@ -37,9 +37,9 @@ Here is the setup command:
 ```
 ma-image-resize-tool setup --orientation portrait --location yourInstallDir
 ```
-    "--orientation" has to be either "landscape" or "portrait"
+"--orientation" has to be either "landscape" or "portrait"
 
-    " --location" is optional (default is the current working directory)
+" --location" is optional (default is the current working directory)
 
 ### Advanced config files
 To help with version control the tool supports two config files: "config.json" and "config-local.json". Values in config-local.json will be merged with (overwrite) values in config.json. We recommend to add "config-local.json" to your .gitignore file and store only workstation specific configs in it.
