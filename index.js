@@ -95,13 +95,15 @@ var readParameters = function (argv, settings)
 {
     var deferred = Q.defer();
 
+    // Command
     var command = "default";
-
-    // setup command
     if( argv[2] == "setup" )
     {
         command = "setup";
     }
+
+    var installLocation = null;
+    var orientation = null;
 
     argv.forEach(function (val, index, array)
     {
@@ -110,28 +112,15 @@ var readParameters = function (argv, settings)
             if( command == "setup" )
             {
                 // --orientation
-                var orientation = null;
                 if( argv[index-1] == "--orientation" || argv[index-1] == "-orientation" || argv[index-1] == "orientation" )
                 {
                     orientation = argv[index]
                 }
 
                 // --location
-                var installLocation = null;
                 if( argv[index-1] == "--location" || argv[index-1] == "-location" || argv[index-1] == "location" )
                 {
                     installLocation = argv[index]
-                }
-
-                if( orientation == "landscape" ||
-                    orientation == "portrait" )
-                {
-                    return setup( orientation, installLocation );
-                }
-                else if( index == argv.length-1 )
-                {
-                    display.error('Please specify an orientation.\n  Examples:\n    ma-image-resize-tool setup --orientation portrait\n    ma-image-resize-tool setup --orientation landscape');
-                    deferred.reject();
                 }
             }
             // normal commandline
@@ -169,7 +158,25 @@ var readParameters = function (argv, settings)
         }
     });
 
-    if( command == "default" )
+    if( command == "setup" )
+    {
+        display.header('Setup');
+
+        // check if orientation is set
+        if(
+            orientation == "landscape" ||
+                orientation == "portrait" )
+        {
+            setup( orientation, installLocation );
+            deferred.reject();
+        }
+        else
+        {
+            display.error('Please specify an orientation.\n  Examples:\n    ma-image-resize-tool setup --orientation portrait\n    ma-image-resize-tool setup --orientation landscape');
+            deferred.reject();
+        }
+    }
+    else
     {
         // log used settings
         console.log("  Settings: ");
@@ -215,6 +222,8 @@ var setup = function ( orientation, installLocation )
  */
 var configFileExists = function ()
 {
+    display.header('Creating Images');
+
     var deferred = Q.defer();
     if( settings.LOAD_CONFIGS_FROM_FILES == true )
     {
@@ -1014,9 +1023,6 @@ var makeDir = function (filePath)
 
 var run = function()
 {
-
-    display.header('Creating Images');
-
     return readParameters(process.argv, settings)
         .then(configFileExists)
         .then(configLocalFileExists)
