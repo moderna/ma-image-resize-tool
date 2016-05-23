@@ -11,6 +11,7 @@ var execFile    = require('child_process').execFile;
 var jpegtran    = require('jpegtran-bin');
 var optipng     = require('optipng-bin');
 var glob        = require("glob");
+var fs          = require('fs-extra');
 
 
 /**
@@ -367,7 +368,6 @@ var resolveImagePaths = function (config)
         .forEach(function (image, index, imagesList) {
             if( image.tags == null )
             {
-                console.log("no tags");
                 imagesList[index].tags = "all"; // default tag images to "all"
             }
         })

@@ -1,0 +1,295 @@
+{
+    "aliases":
+        [
+
+            { "name": "<language>", "value" : ["en"] },
+            { "name": "<extensions>", "value": "{png,jpg,jpeg}" },
+
+
+            "// SOURCE",
+
+            { "name": "<source-icons>",   "value" : "./_icons"   },
+            { "name": "<source-screens>", "value" : "./_screens" },
+            { "name": "<source-promos>",  "value" : "./_promos" },
+
+
+            "// TARGET",
+
+            "Apple-AppStore icons",
+            { "name": "<target-apple-appstore-icons>", "value" : "../target/apple-appstore/<language>/icons" },
+            "Apple-AppStore screens",
+            { "name": "<target-apple-appstore-screens>", "value" : "../target/apple-appstore/<language>/screens" },
+            "Apple-AppStore promos & splashscreens",
+            { "name": "<target-apple-appstore-promos>", "value" : "../target/apple-appstore/<language>/promos" },
+
+            "GooglePlay icons",
+            { "name": "<target-google-play-icons>", "value" : "../target/google-play/<language>/icons" },
+            "GooglePlay screens",
+            { "name": "<target-google-play-screens>", "value" : "../target/google-play/<language>/screens" },
+            "GooglePlay promos & splashscreens",
+            { "name": "<target-google-play-promos>", "value" : "../target/google-play/<language>/promos" },
+
+            "Amazon icons",
+            { "name": "<target-amazon-icons>", "value" : "../target/amazon/<language>/icons" },
+            "Amazon screens",
+            { "name": "<target-amazon-screens>", "value" : "../target/amazon/<language>/screens" },
+            "Amazon promos & splashscreens",
+            { "name": "<target-amazon-promos>", "value" : "../target/amazon/<language>/promos" },
+
+            "Samsung icons",
+            { "name": "<target-samsung-icons>", "value" : "../target/samsung/<language>/icons" },
+            "Samsung screens",
+            { "name": "<target-samsung-screens>", "value" : "../target/samsung/<language>/screens" },
+            "Samsung promos & splashscreens",
+            { "name": "<target-samsung-promos>", "value" : "../target/samsung/<language>/promos" },
+
+            "Windows-Store icons",
+            { "name": "<target-windows-store-icons>", "value" : "../target/windows-store/<language>/icons" },
+            "Windows-Store screens",
+            { "name": "<target-windows-store-screens>", "value" : "../target/windows-store/<language>/screens" },
+            "Windows-Store promos & splashscreens",
+            { "name": "<target-windows-store-promos>", "value" : "../target/windows-store/<language>/promos" },
+
+            "BlackBerry icons",
+            { "name": "<target-blackberry-icons>", "value" : "../target/blackberry/<language>/icons" },
+            "BlackBerry screens",
+            { "name": "<target-blackberry-screens>", "value" : "../target/blackberry/<language>/screens" },
+            "BlackBerry promos & splashscreens",
+            { "name": "<target-blackberry-promos>", "value" : "../target/blackberry/<language>/promos" }
+        ],
+
+    "optimize":
+    {
+        "optipng" : "",
+        "jpgtran" : "-copy none -optimize"
+    },
+
+    "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02",
+
+    "roundCorners" : 0,
+    "quality" : 0.75,
+
+    "images":
+        [
+            "// APPLE-APPSTORE - icons",
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-22x22.png",  "resolution":"22x22" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-25x25.png",  "resolution":"25x25" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-29x29.png",  "resolution":"29x29" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-44x44.png",  "resolution":"44x44" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-50x50.png",  "resolution":"50x50" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-58x58.png",  "resolution":"58x58" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-60x60.png",  "resolution":"60x60" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-66x66.png",  "resolution":"66x66" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-75x75.png",  "resolution":"75x75" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-76x76.png",  "resolution":"76x76" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-80x80.png",  "resolution":"80x80" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-87x87.png",  "resolution":"87x87" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-120x120.png",  "resolution":"120x120" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-152x152.png",  "resolution":"152x152" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-167x167.png",  "resolution":"167x167" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-180x180.png",  "resolution":"180x180" },
+            { "tags" : "all,apple-appstore-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-apple-appstore-icons>/icon-1024x1024.png",  "resolution":"1024x1024" },
+
+            "// APPLE-APPSTORE - screens (landscape)",
+            { "tags" : "all,apple-appstore-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-apple-appstore-screens>/3.5-inch/*.jpg", "resolution":"960x640"   },
+            { "tags" : "all,apple-appstore-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-apple-appstore-screens>/4.0-inch/*.jpg", "resolution":"1136x640"  },
+            { "tags" : "all,apple-appstore-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-apple-appstore-screens>/4.7-inch/*.jpg", "resolution":"1334x750"  },
+            { "tags" : "all,apple-appstore-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-apple-appstore-screens>/5.5-inch/*.jpg", "resolution":"2208x1242" },
+            { "tags" : "all,apple-appstore-screens", "sourcePath" : "<source-screens>/4to3/*.<extensions>",   "targetPath" : "<target-apple-appstore-screens>/iPad/*.jpg",     "resolution":"2048x1536" },
+            { "tags" : "all,apple-appstore-screens", "sourcePath" : "<source-screens>/4to3/*.<extensions>",   "targetPath" : "<target-apple-appstore-screens>/iPadPro/*.jpg",  "resolution":"2732x2048" },
+
+            "// APPLE-APPSTORE - promos & splashscreens (landscape)",
+            { "tags" : "all,apple-appstore-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-apple-appstore-promos>/splashscreen-3.5-inch.jpg", "resolution":"960x640"   },
+            { "tags" : "all,apple-appstore-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-apple-appstore-promos>/splashscreen-4.0-inch.jpg", "resolution":"1136x640"  },
+            { "tags" : "all,apple-appstore-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-apple-appstore-promos>/splashscreen-4.7-inch.jpg", "resolution":"1334x750"  },
+            { "tags" : "all,apple-appstore-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-apple-appstore-promos>/splashscreen-5.5-inch.jpg", "resolution":"2208x1242" },
+            { "tags" : "all,apple-appstore-promos", "sourcePath" : "<source-promos>/4to3/splashscreen.<extensions>",   "targetPath" : "<target-apple-appstore-promos>/splashscreen-iPad.jpg",     "resolution":"2048x1536" },
+            { "tags" : "all,apple-appstore-promos", "sourcePath" : "<source-promos>/4to3/splashscreen.<extensions>",   "targetPath" : "<target-apple-appstore-promos>/splashscreen-iPadPro.jpg",  "resolution":"2732x2048" },
+
+
+
+            "// GOOGLE PLAY - icons",
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-ldpi-36x36.png",      "resolution":"36x36" },
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-mdpi-48x48.png",      "resolution":"48x48" },
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-hdpi-72x72.png",      "resolution":"72x72" },
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-96x96.png",           "resolution":"96x96" },
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-xhdpi-144x144.png",   "resolution":"144x144" },
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-xxhdpi-192x192.png",  "resolution":"192x192" },
+            { "tags" : "all,google-play-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-google-play-icons>/icon-xxxhdpi-512x512.png", "resolution":"512x512" },
+
+            "// GOOGLE PLAY - screens (landscape)",
+            { "tags" : "all,google-play-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-google-play-screens>/phone/*.png", "resolution":"1280x720"   },
+            { "tags" : "all,google-play-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-google-play-screens>/tablets-7-inch/*.png", "resolution":"1920x1280" },
+            { "tags" : "all,google-play-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-google-play-screens>/tablets-10-inch/*.png", "resolution":"2208x1472" },
+            { "tags" : "all,google-play-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-google-play-screens>/android-tv/*.png", "resolution":"1280x720"   },
+
+            "// GOOGLE PLAY - promos & splashscreens (landscape)",
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-google-play-promos>/splashscreen-ldpi-320x200.png", "resolution":"320x200"   },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-google-play-promos>/splashscreen-mdpi-480x320.png", "resolution":"480x320"   },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-google-play-promos>/splashscreen-hdpi-800x480.png", "resolution":"800x480"   },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-google-play-promos>/splashscreen-xhdpi-1280x720.png", "resolution":"1280x720"   },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-google-play-promos>/splashscreen-xxhdpi-1600x960.png", "resolution":"1600x960"   },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-google-play-promos>/splashscreen-xxxhdpi-1920x1280.png", "resolution":"1920x1280"   },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/promo.<extensions>",       "targetPath" : "<target-google-play-promos>/ad.png", "resolution":"180x120"  },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/2to1/promo.<extensions>",         "targetPath" : "<target-google-play-promos>/banner.png", "resolution":"1024x500"  },
+            { "tags" : "all,google-play-promos", "sourcePath" : "<source-promos>/16to10/promo.<extensions>",       "targetPath" : "<target-google-play-promos>/tv-banner.png", "resolution":"1280x720"  },
+
+
+
+            "// amazon - icons",
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-ldpi-36x36.png",      "resolution":"36x36" },
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-mdpi-48x48.png",      "resolution":"48x48" },
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-hdpi-72x72.png",      "resolution":"72x72" },
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-96x96.png",           "resolution":"96x96" },
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xhdpi-144x144.png",   "resolution":"144x144" },
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xxhdpi-192x192.png",  "resolution":"192x192" },
+            { "tags" : "all,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xxxhdpi-512x512.png", "resolution":"512x512" },
+
+            "// amazon - screens (landscape)",
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/800x480/*.jpg", "resolution":"800x480"     },
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/1024x600/*.jpg", "resolution":"1024x600"   },
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/1280x720/*.jpg", "resolution":"1280x720"   },
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/1280x800/*.jpg", "resolution":"1280x800"   },
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/1920x1080/*.jpg", "resolution":"1920x1080" },
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/1920x1200/*.jpg", "resolution":"1920x1200" },
+            { "tags" : "all,amazon-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-amazon-screens>/2560x1600/*.jpg", "resolution":"2560x1600" },
+
+            "// amazon - promos & splashscreens (landscape)",
+            { "tags" : "all,amazon-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-amazon-promos>/splashscreen-1024x600.png", "resolution":"1024x600"   },
+            { "tags" : "all,amazon-promos", "sourcePath" : "<source-promos>/2to1/promo.<extensions>",         "targetPath" : "<target-amazon-promos>/banner.png", "resolution":"1024x500"  },
+
+
+
+            "// samsung - icons",
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-ldpi-36x36.png",      "resolution":"36x36" },
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-mdpi-48x48.png",      "resolution":"48x48" },
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-hdpi-72x72.png",      "resolution":"72x72" },
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-96x96.png",           "resolution":"96x96" },
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-xhdpi-144x144.png",   "resolution":"144x144" },
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-xxhdpi-192x192.png",  "resolution":"192x192" },
+            { "tags" : "all,samsung-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-samsung-icons>/icon-xxxhdpi-512x512.png", "resolution":"512x512" },
+
+            "// samsung - screens (landscape)",
+            { "tags" : "all,samsung-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-samsung-screens>/1920x1080/*.jpg", "resolution":"1920x1080", "quality" : 0.7 },
+
+            "// samsung - promos & splashscreens (landscape)",
+            { "tags" : "all,samsung-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-samsung-promos>/splashscreen-ldpi-320x200.png", "resolution":"320x200"   },
+            { "tags" : "all,samsung-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-samsung-promos>/splashscreen-mdpi-480x320.png", "resolution":"480x320"   },
+            { "tags" : "all,samsung-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-samsung-promos>/splashscreen-hdpi-800x480.png", "resolution":"800x480"   },
+            { "tags" : "all,samsung-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-samsung-promos>/splashscreen-xhdpi-1280x720.png", "resolution":"1280x720"   },
+            { "tags" : "all,samsung-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-samsung-promos>/splashscreen-xxhdpi-1600x960.png", "resolution":"1600x960"   },
+            { "tags" : "all,samsung-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-samsung-promos>/splashscreen-xxxhdpi-1920x1280.png", "resolution":"1920x1280"   },
+
+
+
+            "// WINDOWS STORE - icons",
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-16x16.png", "resolution":"16x16", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-24x24.png", "resolution":"24x24", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-30x30.png", "resolution":"30x30", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-32x32.png", "resolution":"32x32", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-33x33.png", "resolution":"33x33", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-36x36.png", "resolution":"36x36", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-42x42.png", "resolution":"42x42", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-33x33.png", "resolution":"43x43", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-44x44.png", "resolution":"44x44", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-48x48.png", "resolution":"48x48", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-50x50.png", "resolution":"50x50", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-54x54.png", "resolution":"54x54", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-55x55.png", "resolution":"55x55", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-56x56.png", "resolution":"56x56", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-62x62.png", "resolution":"62x62", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-63x63.png", "resolution":"63x63", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-66x66.png", "resolution":"66x66", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-70x70.png", "resolution":"70x70", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-71x71.png", "resolution":"71x71", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-75x75.png", "resolution":"75x75", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-88x88.png", "resolution":"88x88", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-89x89.png", "resolution":"89x89", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-90x90.png", "resolution":"90x90", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-96x96.png", "resolution":"96x96", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-98x98.png", "resolution":"98x98", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-99x99.png", "resolution":"99x99", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-100x100.png", "resolution":"100x100", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-106x106.png", "resolution":"106x106", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-107x107.png", "resolution":"107x107", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-120x120.png", "resolution":"120x120", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-126x126.png", "resolution":"126x126", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-142x142.png", "resolution":"142x142", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-150x150.png", "resolution":"150x150", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-170x170.png", "resolution":"170x170", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-176x176.png", "resolution":"176x176", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-188x188.png", "resolution":"188x188", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-200x200.png", "resolution":"200x200", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-210x210.png", "resolution":"210x210", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-225x225.png", "resolution":"225x225", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-248x248.png", "resolution":"248x248", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-256x256.png", "resolution":"256x256", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-270x270.png", "resolution":"270x270", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-284x284.png", "resolution":"284x284", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-300x300.png", "resolution":"300x300", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-310x310.png", "resolution":"310x310", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-358x358.png", "resolution":"358x358", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-360x360.png", "resolution":"360x360", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-388x388.png", "resolution":"388x388", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-434x434.png", "resolution":"434x434", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-465x465.png", "resolution":"465x465", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-558x558.png", "resolution":"558x558", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-600x600.png", "resolution":"600x600", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-620x620.png", "resolution":"620x620", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-1240x1240.png", "resolution":"1240x1240", "quality" : 0.75 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-1280x1280.png", "resolution":"1280x1280", "quality" : 0.75 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-1240x600.png", "resolution":"1240x600", "quality" : 0.75 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-744x360.png", "resolution":"744x360", "quality" : 0.75 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-620x300.png", "resolution":"620x300", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-558x270.png", "resolution":"558x270", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-465x225.png", "resolution":"465x225", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-434x210.png", "resolution":"434x210", "quality" : 0.8 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-388x188.png", "resolution":"388x188", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-358x173.png", "resolution":"358x173", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-310x150.png", "resolution":"310x150", "quality" : 1.0 },
+            { "tags" : "all,windows-store-icons", "sourcePath" : "<source-icons>/2to1/icon.*", "targetPath" : "<target-windows-store-icons>/icon-wide-248x120.png", "resolution":"248x120", "quality" : 1.0 },
+
+            "// WINDOWS STORE - screens (landscape)",
+            { "tags" : "all,windows-store-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-windows-store-screens>/store/*.png", "resolution":"1366x768", "quality" : 1.0 },
+            { "tags" : "all,windows-store-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-windows-store-screens>/phone/*.png", "resolution":"1280x768", "quality" : 1.0 },
+
+            "// WINDOWS STORE - splashscreens (landscape)",
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-1116x540.png", "resolution":"1116x540", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-868x420.png", "resolution":"868x420", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-620x300.png", "resolution":"620x300", "quality" : 1.0 },
+            "// Win Phone splashscreens need to be portrait even if it´s a landscape app",
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-1152x1920.png", "resolution":"1920x1152", "quality" : 1.0, "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -rotate -90"},
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-672x1120.png", "resolution":"1120x672", "quality" : 1.0, "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -rotate -90"},
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-480x800.png", "resolution":"800x480", "quality" : 1.0, "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -rotate -90"},
+
+            "// WINDOWS STORE - promos",
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/4to3/background-windows.<extensions>", "targetPath" : "<target-windows-store-promos>/background-1000x800.png", "resolution":"1000x800", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos1", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-358x358.png", "resolution":"358x358", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-414x468.png", "resolution":"414x468", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-558x558.png", "resolution":"558x558", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/2to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-414x180.png", "resolution":"414x180", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/2to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-846x468.png", "resolution":"846x468", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/2to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-2400x1200.png", "resolution":"2400x1200", "quality" : 1.0 },
+            { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/3to4/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-558x756.png", "resolution":"558x756", "quality" : 1.0 },
+
+
+
+            "// BLACKBERRY - icons",
+            { "tags" : "all,blackberry-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-blackberry-icons>/icon-86x86.png",  "resolution":"86x86", "roundCorners": 0.2 },
+            { "tags" : "all,blackberry-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-blackberry-icons>/icon-114x114.png",  "resolution":"114x114", "roundCorners": 0.2 },
+            { "tags" : "all,blackberry-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-blackberry-icons>/icon-150x150.png",  "resolution":"150x150", "roundCorners": 0.2 },
+            { "tags" : "all,blackberry-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-blackberry-icons>/icon-480x480.png",  "resolution":"480x480", "roundCorners": 0.2 },
+
+            "// BLACKBERRY - screens (landscape)",
+            { "tags" : "all,blackberry-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-blackberry-screens>/*.png", "resolution":"1920x1200"   },
+
+            "// BLACKBERRY - promos & splashscreens (landscape)",
+            { "tags" : "all,blackberry-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-blackberry-promos>/splashscreen-1024x600.jpg", "resolution":"1024x600"   },
+            { "tags" : "all,blackberry-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.<extensions>", "targetPath" : "<target-blackberry-promos>/splashscreen-600x1024.jpg", "resolution":"1024x600", "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -rotate -90"  },
+            { "tags" : "all,blackberry-promos", "sourcePath" : "<source-promos>/16to10/promo.<extensions>", "targetPath" : "<target-blackberry-promos>/banner.png", "resolution":"1920x1186"  }
+
+
+        ],
+
+    "tags" : "all"
+}
