@@ -93,48 +93,120 @@ var configureWithData = function( configData, configLocalData, tags, aliases )
  */
 var readParameters = function (argv, settings)
 {
+    var deferred = Q.defer();
+
+    var command = "default";
+
+    // setup command
+    if( argv[2] == "setup" )
+    {
+        command = "setup";
+    }
+
     argv.forEach(function (val, index, array)
     {
         if( index > 1) // index 2,3,4,5,6 ...
         {
-            // --config
-            if( argv[index-1] == "--config" || argv[index-1] == "-config" || argv[index-1] == "config" )
+            if( command == "setup" )
             {
-                settings.CONFIG_FILE = argv[index];
-            }
+                // --orientation
+                var orientation = null;
+                if( argv[index-1] == "--orientation" || argv[index-1] == "-orientation" || argv[index-1] == "orientation" )
+                {
+                    orientation = argv[index]
+                }
 
-            // --config-local
-            if( argv[index-1] == "--config-local" || argv[index-1] == "-config-local" || argv[index-1] == "config-local" )
-            {
-                settings.CONFIG_LOCAL_FILE = argv[index];
-            }
+                // --location
+                var installLocation = null;
+                if( argv[index-1] == "--location" || argv[index-1] == "-location" || argv[index-1] == "location" )
+                {
+                    installLocation = argv[index]
+                }
 
-            // --tags
-            if( argv[index-1] == "--tags" || argv[index-1] == "-tags" || argv[index-1] == "tags" )
-            {
-                settings.TAGS = argv[index].split(",");
+                if( orientation == "landscape" ||
+                    orientation == "portrait" )
+                {
+                    return setup( orientation, installLocation );
+                }
+                else if( index == argv.length-1 )
+                {
+                    display.error('Please specify an orientation.\n  Examples:\n    ma-image-resize-tool setup --orientation portrait\n    ma-image-resize-tool setup --orientation landscape');
+                    deferred.reject();
+                }
             }
-
-            // --alias
-            if( argv[index-2] == "--alias" || argv[index-2] == "-alias" || argv[index-2] == "alias" )
+            // normal commandline
+            else
             {
-                settings.ALIASES.push( { "name" : argv[index-1], "value" : argv[index].split(",") } );
+                // --config
+                if( argv[index-1] == "--config" || argv[index-1] == "-config" || argv[index-1] == "config" )
+                {
+                    settings.CONFIG_FILE = argv[index];
+                }
+
+                // --config-local
+                if( argv[index-1] == "--config-local" || argv[index-1] == "-config-local" || argv[index-1] == "config-local" )
+                {
+                    settings.CONFIG_LOCAL_FILE = argv[index];
+                }
+                else
+                {
+                    // local config not defined > search for it in the same path as config
+                    settings.CONFIG_LOCAL_FILE = path.normalize(path.dirname(settings.CONFIG_FILE) + path.sep + settings.CONFIG_LOCAL_FILE);
+                }
+
+                // --tags
+                if( argv[index-1] == "--tags" || argv[index-1] == "-tags" || argv[index-1] == "tags" )
+                {
+                    settings.TAGS = argv[index].split(",");
+                }
+
+                // --alias
+                if( argv[index-2] == "--alias" || argv[index-2] == "-alias" || argv[index-2] == "alias" )
+                {
+                    settings.ALIASES.push( { "name" : argv[index-1], "value" : argv[index].split(",") } );
+                }
             }
         }
     });
 
-    // log used settings
-    console.log("  Settings: ");
-    Object.keys(settings).forEach(function(key) {
-        console.log( "   - " + key + ": " + settings[key] );
-    });
-    console.log("  Current working dir is:\n   - " + process.cwd());
+    if( command == "default" )
+    {
+        // log used settings
+        console.log("  Settings: ");
+        Object.keys(settings).forEach(function(key) {
+            console.log( "   - " + key + ": " + settings[key] );
+        });
+        console.log("  Current working dir is:\n   - " + process.cwd());
 
-    var deferred = Q.defer();
-    deferred.resolve(settings);
+        deferred.resolve(settings);
+    }
 
     return deferred.promise;
 };
+
+var setup = function ( orientation, installLocation )
+{
+    var deferred = Q.defer();
+
+    var sourceDir = __dirname + path.sep + "templates" + path.sep + orientation;
+    var targetDir = path.normalize(installLocation || process.cwd());
+
+    // copy files
+    fs.copy(sourceDir, targetDir, function (err) {
+        if (err)
+        {
+            display.error("Error in setup.     \n      Copy\n        '" + sourceDir + "'\n      to\n        '" + targetDir + "'\n      failed:\n    " + err);
+            deferred.reject();
+        }
+        else
+        {
+            display.success("    Setup completed in '" + targetDir + "'.");
+            deferred.resolve();
+        }
+    });
+
+    return deferred.promise;
+}
 
 /**
  * Checks if a config.json file exists
@@ -294,7 +366,7 @@ var prepareConfigs = function (config)
         config.basePath.charAt(config.basePath.length-1) != "/" &&
         config.basePath.charAt(config.basePath.length-1) != "\\" )
     {
-        config.basePath + path.sep;
+        config.basePath = config.basePath + path.sep;
     }
 
     // log new working dir if available
