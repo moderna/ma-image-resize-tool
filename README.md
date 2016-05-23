@@ -38,7 +38,7 @@ Here is the setup command:
 ma-image-resize-tool setup --orientation portrait --location yourInstallDir
 ```
     "--orientation" has to be either "landscape" or "portrait"
-    
+
     " --location" is optional (default is the current working directory)
 
 ### Advanced config files
