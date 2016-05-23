@@ -34,11 +34,12 @@ The tool uses a config file in JSON format. Here is the simplest setup you can m
 The tool includes config.json templates for mobile developers. These include icons, screenshots and promo gfx for Apple iOS, Google Play, Windows Store, Amazon, BlackBerry and Samsung.
 
 Here is the setup command:
-    ```
-    ma-image-resize-tool setup --orientation portrait --location yourInstallDir
-    ```
-    * "--orientation" has to be either "landscape" or "portrait"
-    * " --location" is optional (default is the current working directory)
+```
+ma-image-resize-tool setup --orientation portrait --location yourInstallDir
+```
+    "--orientation" has to be either "landscape" or "portrait"
+    
+    " --location" is optional (default is the current working directory)
 
 ### Advanced config files
 To help with version control the tool supports two config files: "config.json" and "config-local.json". Values in config-local.json will be merged with (overwrite) values in config.json. We recommend to add "config-local.json" to your .gitignore file and store only workstation specific configs in it.
