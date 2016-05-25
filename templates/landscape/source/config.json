@@ -251,7 +251,9 @@
 
             "// WINDOWS STORE - screens (landscape)",
             { "tags" : "all,windows-store-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-windows-store-screens>/store/*.png", "resolution":"1366x768", "quality" : 1.0 },
-            { "tags" : "all,windows-store-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-windows-store-screens>/phone/*.png", "resolution":"1280x768", "quality" : 1.0 },
+            "// On some old windows phones (e.g. Nokia Lumia 520) landscape screen are cropped to a protratit aspect ratio.",
+            "// That´s why we rotate them to work around that issue.",
+            { "tags" : "all,windows-store-screens", "sourcePath" : "<source-screens>/16to10/*.<extensions>", "targetPath" : "<target-windows-store-screens>/phone/*.png", "resolution":"1280x768", "quality" : 1.0, "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02 -rotate -90" },
 
             "// WINDOWS STORE - splashscreens (landscape)",
             { "tags" : "all,windows-store-promos", "sourcePath" : "<source-promos>/16to10/splashscreen.*", "targetPath" : "<target-windows-store-promos>/splashscreen-1116x540.png", "resolution":"1116x540", "quality" : 1.0 },
