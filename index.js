@@ -703,13 +703,33 @@ var resolveImagePath = function (image, config)
                 var newImage = _.extend( {}, image );
                 // set glob-resolved source path
                 newImage.sourcePath = file;
-                // resolve *.ext in target paths
+                // resolve *.ext or /* in target paths
                 var tmpTargetPath = image.targetPath;
-                var starExtension = tmpTargetPath.match(/(\*\.[a-zA-z0-9]+$)/g);
-                if( starExtension != null && starExtension.length == 1 )
+                if( tmpTargetPath.indexOf('*') != -1 )
                 {
-                    starExtension = starExtension[0];
-                    tmpTargetPath = path.parse(tmpTargetPath).dir + path.sep + path.parse(file).name + starExtension.replace("\*","");
+                    // check if star is at the end
+                    if( tmpTargetPath.indexOf('*') == tmpTargetPath.length-1 )
+                    {
+                        // a path like "dir/subdir/*" with "*" at the end
+                        // replace * with <sourcefileaname>.<extension>
+                        tmpTargetPath = tmpTargetPath.split('*').join( path.basename(file) );
+                    }
+                    else
+                    {
+                        // a path with extensions like "dir/subdir/*.png"
+                        // replace * with <sourcefileaname> without extension
+                        tmpTargetPath = tmpTargetPath.split('*').join( path.parse(file).name );
+                    }
+
+                    // replace [resolution] with image resolution
+                    var cleanResolution = image.resolution.replace(/[^0-9x]/g, "");
+                    var _wh = cleanResolution.split("x");
+                    var width = _wh[0];
+                    var height = _wh[1];
+                    tmpTargetPath = tmpTargetPath.split("[resolution]").join( cleanResolution );
+                    tmpTargetPath = tmpTargetPath.split("[width]").join( width );
+                    tmpTargetPath = tmpTargetPath.split("[height]").join( height );
+
                 }
                 newImage.targetPath = tmpTargetPath;
                 // add new image
@@ -777,7 +797,8 @@ var generateImages = function (imagesAndConfig)
 var generateImage = function (image, config)
 {
     // size
-    var _wh = image.resolution.split("x");
+    var cleanResolution = image.resolution.replace(/[^0-9x]/g, "");
+    var _wh = cleanResolution.split("x");
     var width = _wh[0];
     var height = _wh[1];
 
@@ -797,7 +818,7 @@ var generateImage = function (image, config)
         .catch(function (error) {
             display.error(error);
             // warn the user (hint: you should make sure the parent sequence uses Q.allSettled())
-            display.warning('Source image "' + image.sourcePath + '" does not exist.');
+            display.warning('Source image "' + image.sourcePath + '" does not exist or target image "' + image.targetPath + '" could not be created.');
         });
 };
 
