@@ -180,9 +180,18 @@ A complete "config.json" file (all options are used here):
             //   *.[extension] (Examples: testDir/*.jpg, *.png)
             // or
             //    [filename].[extension] (Example: testDir/myImage.png).
+            // or
+            //   *
             // The [extension] part defines the output image format.
             // The tool will automatically create all necessary folders and subfolders for
             // the given targetPath.
+            // The star character "*" in target path is replaced by the source file name.
+            // The targetPath also supports some dynamic values which are taken from the image:
+            //  [resolution] (e.g 1024x768)
+            //  [width] (e.g. 1024)
+            //  [height] (e.g. 768)
+            //  This means that a target path path like "./3.5-inch/screen_[resolution].png" will
+            //  be resolved to "./3.5-inch/screen_1024x768.png".
             "targetPath" : "../target/apple-appstore/<language>/screens/3.5-inch/screen1.png",
 
             // "resolution":
