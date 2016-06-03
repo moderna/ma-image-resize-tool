@@ -103,17 +103,21 @@ A complete "config.json" file (all options are used here):
         { "name": "<source-screens-4:3>",   "value" : "./_screens/4to3"  }
     ],
 
-    // This is an optional object which defines whether or not to run lossless image optimizations
-    // on png (optipng) and/or jepg images (jpgtran).
+    // This is an optional object which defines whether or not to run image optimizations
+    // on png (optipng, pngquant) and/or jepg images (jpgtran).
     // Set the value to false or delete an entry to avoid optimization for all images of that type.
     //
-    // The given value (string) is directly passed through to the given tool, thus can use all options
-    // documented for optipng (http://gsp.com/cgi-bin/man.cgi?topic=optipng) and
-    // jpgtran (http://gsp.com/cgi-bin/man.cgi?topic=jpegtran).
-    // Notice that "optipng" requires no default options. It therefore has an empty string as value.
+    // The given value (string) is directly passed through to the given tool, thus you can use all
+    // options documented for:
+    //   optipng  - http://gsp.com/cgi-bin/man.cgi?topic=optipng
+    //   pngquant - http://pngquant.org
+    //   jpgtran  - http://gsp.com/cgi-bin/man.cgi?topic=jpegtran
+    // Notice that "optipng" and "pngquant" require no default options. They therefore have an empty string as value.
+    // Also notice that the lossy compression of pngquant is only used if "quality" is < 1.0 for png images.
     "optimize":
     {
         "optipng" : "",
+        "pngquant" : "",
         "jpgtran" : "-copy none -optimize"
     },
 
