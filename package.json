@@ -39,7 +39,8 @@
     "q": "^1.0.1",
     "underscore": "^1.6.0",
     "glob": "^7.0.3",
-    "fs-extra" : "^0.30.0"
+    "fs-extra" : "^0.30.0",
+    "node-pngquant-bin" : "git://github.com/moderna/node-pngquant-bin.git"
   },
   "bin": {
     "ma-image-resize-tool": "bin\\ma-image-resize-tool"
