@@ -61,6 +61,7 @@
     "optimize":
     {
         "optipng" : "",
+        "pngquant" : "",
         "jpgtran" : "-copy none -optimize"
     },
 

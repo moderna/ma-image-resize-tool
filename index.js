@@ -10,6 +10,7 @@ var exec        = require('child_process').exec;
 var execFile    = require('child_process').execFile;
 var jpegtran    = require('jpegtran-bin');
 var optipng     = require('optipng-bin');
+var pngquantPath = require('node-pngquant-bin').path;
 var glob        = require("glob");
 var fse         = require('fs-extra');
 
@@ -829,7 +830,7 @@ var generateImage = function (image, config)
         .then( function(){
             if( image.optimize == null || ( image.optimize != "false" && image.optimize != false ) )
             {
-                return optimizeImage(image.targetPath, config, 50);
+                return optimizeImage(image.targetPath, config, image, 50);
             }
             else
             {
@@ -995,7 +996,7 @@ var resizeImage = function (image, config)
  * @param  {object} config
  * @return {Promise}
  */
-var optimizeImage = function (filePath, config, delayInMs)
+var optimizeImage = function (filePath, config, image, delayInMs)
 {
     var deferred = Q.defer();
 
@@ -1008,28 +1009,90 @@ var optimizeImage = function (filePath, config, delayInMs)
             switch( path.extname(filePath).toLowerCase() )
             {
                 case ".png":
-                    if( config.optimize && config.optimize.optipng != null && config.optimize.optipng !== false )
+
+                    // optimize png (loss less)
+                    var executeOptipng = function( success )
                     {
-                        var parameters = [];
-                        if( config.optimize.optipng.length > 0 )
+                        if( config.optimize.optipng != null && config.optimize.optipng !== false )
                         {
-                            parameters = config.optimize.optipng.split(" ");
-                        }
-                        parameters = parameters.concat(['-out', filePath, filePath]);
-                        execFile(optipng, parameters, function (err) {
-                            if( err != null )
+                            var parameters = [];
+                            if( config.optimize.optipng.length > 0 )
                             {
-                                display.error('optipng ' + parameters.join(" "));
-                                display.error(err);
+                                parameters = config.optimize.optipng.split(" ");
+                            }
+                            parameters = parameters.concat(['-out', filePath, filePath]);
+                            execFile(optipng, parameters, function (err) {
+                                if( err != null )
+                                {
+                                    display.error('optipng ' + parameters.join(" "));
+                                    display.error(err);
+                                    deferred.resolve();
+                                }
+                                else
+                                {
+                                    console.log('    Image optimized with: "optipng ' + config.optimize.optipng + ' -out ..."');
+                                    success();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            success();
+                        }
+                    }
+
+                    // reduce image size with pngquant if quality is < 1.0
+                    var executePngquant = function( success )
+                    {
+                        if( config.optimize.pngquant != null && config.optimize.pngquant !== false )
+                        {
+                            var quality = Math.round((config.quality || 0.75) * 100);
+                            if( typeof image.quality != "undefined" )
+                            {
+                                quality = Math.round(image.quality * 100);
+                            }
+                            if( quality < 100 )
+                            {
+                                var parameters = [];
+                                parameters = parameters.concat( ['--force', '--quality', "0-" + quality] );
+                                if( config.optimize.pngquant.length > 0 )
+                                {
+                                    parameters = parameters.concat( config.optimize.pngquant.split(" ") );
+                                }
+                                parameters = parameters.concat( ['--out', filePath, filePath] );
+                                execFile(pngquantPath, parameters, function (err) {
+                                    if( err != null )
+                                    {
+                                        display.error('pngquant ' + parameters.join(" "));
+                                        display.error(err);
+                                        deferred.resolve();
+                                    }
+                                    else
+                                    {
+                                        console.log('    Image optimized with: "pngquant ' + config.optimize.pngquant + ' --force --out ..."');
+                                        success();
+                                    }
+                                });
                             }
                             else
                             {
-                                console.log('    Image optimized with: "optipng ' + config.optimize.optipng + ' -out ..."');
+                                success();
                             }
-                            deferred.resolve();
-                        });
+                        }
+                        else
+                        {
+                            success();
+                        }
                     }
+
+                    // start the optimizations
+                    executePngquant(
+                        function(){
+                            executeOptipng(deferred.resolve);
+                        }
+                    );
                     break;
+
                 case ".jpg":
                 case ".jpeg":
                     if( config.optimize && config.optimize.jpgtran != null && config.optimize.jpgtran !== false )
@@ -1054,6 +1117,7 @@ var optimizeImage = function (filePath, config, delayInMs)
                         });
                     }
                     break;
+
                 default:
                     deferred.resolve();
             }
