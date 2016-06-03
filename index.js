@@ -341,16 +341,27 @@ var readConfig = function ()
             if (err) {
                 deferred.reject(err);
             }
-            var config = JSON.parse(data);
-            if(config === false || config == null)
+            try
             {
-                deferred.reject("Parsing "+settings.CONFIG_FILE+" failed.");
+                var config = JSON.parse(data);
+                if(config === false || config == null)
+                {
+                    display.error( "Parsing "+settings.CONFIG_FILE+" failed." );
+                    deferred.reject();
+                }
+                else
+                {
+                    display.success("Parsing "+settings.CONFIG_FILE+" succeeded.");
+                    deferred.resolve(config);
+                }
             }
-            else
+            catch( e )
             {
-                display.success("Parsing "+settings.CONFIG_FILE+" succeeded.");
-                deferred.resolve(config);
+                display.error( "Parsing "+settings.CONFIG_FILE+" failed." );
+                console.log( ("         " + e).red ); // more info would be nice but there is none in e
+                deferred.reject();
             }
+
         });
     }
     else
@@ -378,19 +389,29 @@ var readConfigLocal = function (config)
                     if (err) {
                         deferred.reject(err);
                     }
-                    var configLocal = JSON.parse(data);
-                    if(configLocal === false || configLocal == null)
+                    try
                     {
-                        deferred.reject("Parsing "+settings.CONFIG_LOCAL_FILE+" failed.");
+                        var configLocal = JSON.parse(data);
+                        if(configLocal === false || configLocal == null)
+                        {
+                            display.error("Parsing "+settings.CONFIG_LOCAL_FILE+" failed.");
+                            deferred.reject();
+                        }
+                        else
+                        {
+                            display.success("Parsing "+settings.CONFIG_LOCAL_FILE+" succeeded.");
+
+                            // merge config and set basePath
+                            var finalConfig = _.extend( {}, config, configLocal );
+
+                            deferred.resolve( finalConfig );
+                        }
                     }
-                    else
+                    catch( e )
                     {
-                        display.success("Parsing "+settings.CONFIG_LOCAL_FILE+" succeeded.");
-
-                        // merge config and set basePath
-                        var finalConfig = _.extend( {}, config, configLocal );
-
-                        deferred.resolve( finalConfig );
+                        display.error( "Parsing "+settings.CONFIG_LOCAL_FILE+" failed." );
+                        console.log( ("         " + e).red ); // more info would be nice but there is none in e
+                        deferred.reject();
                     }
                 });
             }
