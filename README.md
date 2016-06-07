@@ -7,7 +7,7 @@ A generic image resizing tool based on node.js optimized for making mobile app s
 
    Make sure to tick the box "Install legacy utilities (e.g. convert)" during installation on windows.
 
-2. `npm install https://github.com/moderna/ma-image-resize-tool.git`
+2. `sudo npm install https://github.com/moderna/ma-image-resize-tool.git`
 
    Make sure you have npm version 3.5.3 or higher installed.
 
