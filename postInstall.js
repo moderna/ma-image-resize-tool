@@ -73,6 +73,12 @@ var postInstall = function ()
                             }
                             else
                             {
+                                // fix chmod
+                                if( !isWin )
+                                {
+                                    fs.chmodSync(targetFile,'0755');
+                                }
+
                                 console.log("\n");
                                 display.success("Creation of '" + targetFile + "' completed.");
                                 display.info("You should call \""+setupFilename+"\" now.");
