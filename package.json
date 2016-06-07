@@ -43,7 +43,7 @@
     "node-pngquant-bin" : "git://github.com/moderna/node-pngquant-bin.git"
   },
   "bin": {
-    "ma-image-resize-tool": "bin\\ma-image-resize-tool"
+    "ma-image-resize-tool": "bin/ma-image-resize-tool"
   },
   "scripts":
   {
