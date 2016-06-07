@@ -256,6 +256,13 @@ var setup = function ( orientation, installLocation )
                         }
                         else
                         {
+                            // fix chmod
+                            if( !isWin )
+                            {
+                                fs.chmodSync(targetDir + path.sep + targetDirCommandFile,'0755');
+                            }
+
+                            // success
                             display.success("    Setup completed in '" + targetDir + "'.");
                             deferred.resolve();
                         }
