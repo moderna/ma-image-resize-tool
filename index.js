@@ -749,17 +749,17 @@ var resolveImagePath = function (image, config)
                         // replace * with <sourcefileaname> without extension
                         tmpTargetPath = tmpTargetPath.split('*').join( path.parse(file).name );
                     }
-
-                    // replace [resolution] with image resolution
-                    var cleanResolution = image.resolution.replace(/[^0-9x]/g, "");
-                    var _wh = cleanResolution.split("x");
-                    var width = _wh[0];
-                    var height = _wh[1];
-                    tmpTargetPath = tmpTargetPath.split("[resolution]").join( cleanResolution );
-                    tmpTargetPath = tmpTargetPath.split("[width]").join( width );
-                    tmpTargetPath = tmpTargetPath.split("[height]").join( height );
-
                 }
+
+                // replace [resolution] with image resolution
+                var cleanResolution = image.resolution.replace(/[^0-9x]/g, "");
+                var _wh = cleanResolution.split("x");
+                var width = _wh[0];
+                var height = _wh[1];
+                tmpTargetPath = tmpTargetPath.split("[resolution]").join( cleanResolution );
+                tmpTargetPath = tmpTargetPath.split("[width]").join( width );
+                tmpTargetPath = tmpTargetPath.split("[height]").join( height );
+
                 newImage.targetPath = tmpTargetPath;
                 // add new image
                 images.push( newImage );
