@@ -566,6 +566,25 @@ var resolveAliasedImagePaths = function (image, config)
     var resolvedImageSourcePaths = resolveAliases( image.sourcePath, config.aliases );
     var resolvedImageTargetPaths = resolveAliases( image.targetPath, config.aliases );
 
+    // check if all aliases have been resolved
+    // this check is based on the assumption that aliases contain < AND >.
+    var aliasError = null;
+    _(resolvedImageSourcePaths.concat(resolvedImageTargetPaths)).forEach(function (imagePath) {
+        if(    imagePath.indexOf( '<' ) != -1
+            && imagePath.indexOf( '>' ) != -1
+            )
+        {
+            aliasError = "Possibly undefined alias found in '"+imagePath+"'. Maybe a typo?";
+        }
+    });
+
+    if( aliasError != null )
+    {
+        display.error( aliasError );
+        deferred.reject(aliasError);
+        return deferred.promise;
+    }
+
     // create unique source and target path pairs (combine every resolvedImageSourcePath with every resolvedImageTargetPath)
     var imagePaths = [];
     _(resolvedImageSourcePaths).forEach(function(sourcePath){
