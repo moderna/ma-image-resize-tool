@@ -574,7 +574,7 @@ var resolveAliasedImagePaths = function (image, config)
             && imagePath.indexOf( '>' ) != -1
             )
         {
-            aliasError = "Possibly undefined alias found in '"+imagePath+"'. Maybe a typo?";
+            aliasError = "Invalid image path found: '"+imagePath+"'. Maybe a typo in the alias?";
         }
     });
 
