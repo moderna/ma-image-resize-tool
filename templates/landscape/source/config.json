@@ -93,7 +93,7 @@
     "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02",
 
     "roundCorners": 0,
-    "quality"     : 0.75,
+    "quality"     : 1.0,
 
     "images":
         [
