@@ -3,7 +3,7 @@
 A generic image resizing tool based on node.js optimized for making mobile app screenshots and icons. It´s supposed to make screenshot and icon generation easy and flexible (future proof).
 
 ### Setup
-1. Install ImageMagic binaries from http://www.imagemagick.org/script/binary-releases.php
+1. Install ImageMagick binaries from http://www.imagemagick.org/script/binary-releases.php
 
    Make sure to tick the box "Install legacy utilities (e.g. convert)" during installation on windows.
 
@@ -123,8 +123,8 @@ A complete "config.json" file (all options are used here):
         "jpgtran" : "-copy none -optimize"
     },
 
-    // This tool uses ImageMagic (legacy) to resize your images. The given value (string) is directly
-    // passed through to the ImageMagic "convert" command (except for -resize, that one is used
+    // This tool uses ImageMagick (legacy) to resize your images. The given value (string) is directly
+    // passed through to the ImageMagick "convert" command (except for -resize, that one is used
     // by the tool itself).
     //
     // You can use all options documented under:
@@ -135,12 +135,12 @@ A complete "config.json" file (all options are used here):
     // We recommend to use "-unsharp 1.5x1+0.7+0.02" for photoshop like results ;)
     // You can also skip this line (will result in default: "")
     //
-    // Notice that these parameters are added AFTER the "-resize" command. ImageMagic executes the
+    // Notice that these parameters are added AFTER the "-resize" command. ImageMagick executes the
     // given command IN ORDER. Why this important?
     // Here is an example (resize and rotate an image):
     //   Image: { ... targetPath:"img_400x800.jpg", "resolution":"800x400", "imageMagicParameters" : "-rotate 90" }
     //  This will give you an image with dimensions of 400x800, even though you
-    //  specified 800x400 as "resolution". That´s because ImageMagic first resizes
+    //  specified 800x400 as "resolution". That´s because ImageMagick first resizes
     //  the image to "resolution" (800x400) and then executes "-rotate 90" afterwards.
     "imageMagicParameters" : "-unsharp 1.5x1+0.7+0.02",
 
