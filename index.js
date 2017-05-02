@@ -182,6 +182,7 @@ var readParameters = function (argv, settings)
             console.log( "      ma-image-resize-tool setup --orientation portrait");
             console.log( "      ma-image-resize-tool setup --orientation landscape");
             console.log( "      ma-image-resize-tool setup --orientation portrait --location yourRelativeInstallDir");
+            console.log( "      ma-image-resize-tool setup --orientation portrait --location ../_stuff");
             deferred.reject();
             return deferred.promise;
         }
@@ -486,7 +487,7 @@ var prepareConfigs = function (config)
     // merge setting aliases with config aliases
     config.aliases = _.extend( config.aliases, settings.ALIASES );
 
-    // remove comments from alaises
+    // remove comments from aliases
     config.aliases = _(config.aliases).filter( function(alias){ return _.isObject(alias); } );
 
     // convert all alias values into array
@@ -519,7 +520,7 @@ var prepareConfigs = function (config)
  */
 var resolveImagePaths = function (config)
 {
-    console.log("\n  Resolving image paths...")
+    console.log("\n  Resolving image paths...");
     var deferred = Q.defer();
     var sequence = Q();
     var all = [];
@@ -574,7 +575,7 @@ var resolveAliasedImagePaths = function (image, config)
             && imagePath.indexOf( '>' ) != -1
             )
         {
-            aliasError = "Invalid image path found: '"+imagePath+"'. Maybe a typo in the alias?";
+            aliasError = "Possibly undefined alias found in '"+imagePath+"'. Maybe a typo?";
         }
     });
 
@@ -783,6 +784,12 @@ var resolveImagePath = function (image, config)
                 // add new image
                 images.push( newImage );
             })
+
+            // show info if the path couldn't be resolved by glob.
+            if( images.length == 0 )
+            {
+                display.info( "No results for image path '"+image.sourcePath+"'" );
+            }
 
             deferred.resolve( images );
         }
