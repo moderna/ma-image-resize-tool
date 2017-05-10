@@ -80,7 +80,16 @@
             "Tizen promos & splashscreens",
             { "name": "<target-tizen-promos>" , "value" : "../target/tizen/<language>/promos"  },
 			"Tizen in-app products",
-            { "name": "<target-tizen-iaps>"   , "value" : "../target/tizen/<language>/iaps"    }
+            { "name": "<target-tizen-iaps>"   , "value" : "../target/tizen/<language>/iaps"    },
+
+            "Facebook icons",
+            { "name": "<target-facebook-icons>"  , "value" : "../target/facebook/<language>/icons"   },
+            "Facebook screens",
+            { "name": "<target-facebook-screens>", "value" : "../target/facebook/<language>/screens" },
+            "Facebook promos & splashscreens",
+            { "name": "<target-facebook-promos>" , "value" : "../target/facebook/<language>/promos"  },
+            "Facebook in-app products",
+            { "name": "<target-facebook-iaps>"   , "value" : "../target/facebook/<language>/iaps"    }
 
         ],
 
@@ -366,7 +375,25 @@
 
             "// TIZEN - in-app purchases",
             { "tags" : "all,iaps,tizen,tizen-iaps"   , "sourcePath" : "<source-iaps>/1to1/*.<extensions>"      , "targetPath" : "<target-tizen-iaps>/*_[width].png"            , "resolution" : "135x135"  },
-            { "tags" : "all,iaps,tizen,tizen-iaps"   , "sourcePath" : "<source-iaps>/2to1/*.<extensions>"      , "targetPath" : "<target-tizen-iaps>/*_[width].png"            , "resolution" : "135x135"  }
+            { "tags" : "all,iaps,tizen,tizen-iaps"   , "sourcePath" : "<source-iaps>/2to1/*.<extensions>"      , "targetPath" : "<target-tizen-iaps>/*_[width].png"            , "resolution" : "135x135"  },
+
+
+
+            "// FACEBOOK - icons",
+            { "tags" : "all,icons,facebook,facebook-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-facebook-icons>/icon-[resolution].png", "resolution" : "16x16" },
+            { "tags" : "all,icons,facebook,facebook-icons", "sourcePath" : "<source-icons>/1to1/icon.*", "targetPath" : "<target-facebook-icons>/icon-[resolution].png", "resolution" : "1024x1024" },
+
+            "// FACEBOOK - screens (landscape)",
+            { "tags" : "all,screens,facebook,facebook-screens", "sourcePath" : "<source-screens>/4to3/*.<extensions>", "targetPath" : "<target-facebook-screens>/*.png", "resolution" : "1600x1200"  },
+
+            "// FACEBOOK - promos & splashscreens",
+            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/5to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "800x150" },
+            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "1200x627" },
+            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/3to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "1848x682" },
+            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "155x100" },
+
+            "// FACEBOOK - in-app purchases",
+            { "tags" : "all,iaps,facebook,facebook-iaps", "sourcePath" : "<source-iaps>/1to1/*.<extensions>", "targetPath" : "<target-facebook-iaps>/*_[width].png", "resolution" : "100x100"  }
         ],
 
     "tags" : "all"
