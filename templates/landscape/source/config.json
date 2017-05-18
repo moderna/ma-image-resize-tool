@@ -387,10 +387,12 @@
             { "tags" : "all,screens,facebook,facebook-screens", "sourcePath" : "<source-screens>/4to3/*.<extensions>", "targetPath" : "<target-facebook-screens>/*.png", "resolution" : "1600x1200"  },
 
             "// FACEBOOK - promos & splashscreens",
-            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/5to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "800x150" },
-            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "1200x627" },
-            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/3to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "1848x682" },
-            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/*.<extensions>", "targetPath" : "<target-facebook-promos>/*-[resolution].png" , "resolution" : "155x100" },
+			{ "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/1to1/FacebookShareLink.<extensions>"   , "targetPath" : "<target-facebook-promos>/ShareLink-[resolution].png" 	, "resolution" : "1200x1200" },
+            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/promo.<extensions>"				  , "targetPath" : "<target-facebook-promos>/Page-[resolution].png" 		, "resolution" : "1200x627" },
+			{ "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/FacebookFeedStory.<extensions>"   , "targetPath" : "<target-facebook-promos>/FeedStory-[resolution].png" 	, "resolution" : "1200x628" },
+            { "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/2to1/promo.<extensions>"				  , "targetPath" : "<target-facebook-promos>/*-[resolution].png" 			, "resolution" : "155x100" },
+			{ "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/3to1/promo.<extensions>"               , "targetPath" : "<target-facebook-promos>/HeroBanner-[resolution].png" 	, "resolution" : "1848x682" },
+			{ "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/5to1/promo.<extensions>"               , "targetPath" : "<target-facebook-promos>/Cover-[resolution].png" 		, "resolution" : "800x150" },			
 
             "// FACEBOOK - in-app purchases",
             { "tags" : "all,iaps,facebook,facebook-iaps", "sourcePath" : "<source-iaps>/1to1/*.<extensions>", "targetPath" : "<target-facebook-iaps>/*_[width].png", "resolution" : "100x100"  }
