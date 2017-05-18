@@ -336,7 +336,8 @@
 
             "// WINDOWS STORE - promos",
             { "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/4to3/background-windows.<extensions>", "targetPath" : "<target-windows-store-promos>/background-1000x800.png", "resolution":"1000x800", "quality" : 1.0 },
-            { "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-358x358.png", "resolution":"358x358", "quality" : 1.0 },
+			{ "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-300x300.png", "resolution":"300x300", "quality" : 1.0 },            
+			{ "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-358x358.png", "resolution":"358x358", "quality" : 1.0 },
             { "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-414x468.png", "resolution":"414x468", "quality" : 1.0 },
             { "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/1to1/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-558x558.png", "resolution":"558x558", "quality" : 1.0 },
             { "tags" : "all,promos,windows-store,windows-store-promos", "sourcePath" : "<source-promos>/3to4/promo.<extensions>", "targetPath" : "<target-windows-store-promos>/banner-558x756.png", "resolution":"558x756", "quality" : 1.0 },
