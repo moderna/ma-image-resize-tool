@@ -412,7 +412,7 @@
 			{ "tags" : "all,promos,facebook,facebook-promos" , "sourcePath" : "<source-promos>/4to3/promo.<extensions>"				  , "targetPath" : "<target-facebook-promos>/LargeMobileBanner-[resolution].png"  , "resolution" : "272x176"   },
             
 			"// FACEBOOK - in-app purchases",
-            { "tags" : "all,iaps,facebook,facebook-iaps", "sourcePath" : "<source-iaps>/1to1/*.<extensions>", "targetPath" : "<target-facebook-iaps>/*_[width].png", "resolution" : "100x100"  }
+            { "tags" : "all,iaps,facebook,facebook-iaps", "sourcePath" : "<source-iaps>/1to1/*.<extensions>", "targetPath" : "<target-facebook-iaps>/*_[width].png", "resolution" : "50x50"  }
 			
 
         ],
