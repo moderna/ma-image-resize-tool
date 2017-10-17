@@ -206,7 +206,8 @@
             { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-mdpi-48x48.png",      "resolution":"48x48" },
             { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-hdpi-72x72.png",      "resolution":"72x72" },
             { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-96x96.png",           "resolution":"96x96" },
-            { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xhdpi-144x144.png",   "resolution":"144x144" },
+            { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xhdpi-114x114.png",   "resolution":"114x114" },
+			{ "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xhdpi-144x144.png",   "resolution":"144x144" },
             { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xxhdpi-192x192.png",  "resolution":"192x192" },
             { "tags" : "all,icons,amazon,amazon-icons", "sourcePath" : "<source-icons>/1to1/icon.*",   "targetPath" : "<target-amazon-icons>/icon-xxxhdpi-512x512.png", "resolution":"512x512" },
 
